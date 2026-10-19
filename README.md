@@ -21,6 +21,26 @@ uvicorn app.main:app --reload
 
 Abra [http://localhost:8000/docs](http://localhost:8000/docs) para ver as rotas e [http://localhost:8000/api/status](http://localhost:8000/api/status) para checar a API e o banco.
 
+## Banco
+
+Com o `DATABASE_URL` preenchido, defina `ALUNO_LEITURA_SENHA` no `.env` e aplique as migrations:
+
+```powershell
+python scripts/migrar.py
+```
+
+Cada arquivo em `migrations/` roda uma vez. A tabela `schema_migrations` guarda o que já foi aplicado. Rodar de novo só avisa `já aplicada`.
+
+Depois monte `NEON_READONLY_URL` com o usuário `aluno_leitura`, a senha de `ALUNO_LEITURA_SENHA` e o mesmo host do `DATABASE_URL`. Essa URL é a chave de leitura do exercício 2. Esse usuário consegue `SELECT` em `perfis`, `posts`, `comentarios`, `curtidas` e nas views de engajamento. `SELECT` em `grupos` tem de falhar com erro de permissão.
+
+Para recriar os dados de exemplo (8 perfis, 120 posts e 6 grupos):
+
+```powershell
+python scripts/seed.py
+```
+
+O script apaga posts, comentários, curtidas e grupos e grava de novo. A linha `pausado` de `config` fica. Se os grupos já existiam, os tokens são os mesmos. Guarde os 6 tokens impressos no final: eles não entram no Git.
+
 ## Vercel
 
 O backend sobe na Vercel no lugar do Render. O `app` em `app/main.py` é o ponto de entrada. As mesmas variáveis do `.env` ficam nas variáveis de ambiente do projeto, nunca no Git. Depois do deploy, `PUBLIC_API_URL` deve ser a URL pública da Vercel, sem barra no final.
