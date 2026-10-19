@@ -1,2 +1,15 @@
+[project]
+name = "fakegram-api"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.32",
+  "psycopg[binary,pool]>=3.2",
+  "pydantic>=2.10",
+  "pydantic-settings>=2.6",
+  "mcp>=1.9",
+]
+
 [tool.vercel]
 entrypoint = "app.main:app"
