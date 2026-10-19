@@ -1,0 +1,11 @@
+---
+description: Regras do backend da oficina Fakegram
+alwaysApply: true
+---
+- Python 3.11+, FastAPI, psycopg 3 com SQL puro (sem ORM), psycopg_pool, pydantic v2, pydantic-settings, SDK oficial `mcp` (FastMCP).
+- docs/CONTRATO_API.md é a fonte da verdade: rotas, nomes de campos, erros e regras devem bater exatamente.
+- Código, nomes e comentários em português, simples e didáticos: alunos de Sistemas de Informação vão ler este código.
+- Nunca coloque segredos no código. Tudo vem do .env. Nunca commitar .env.
+- Regras de negócio ficam em app/servicos/. Rotas REST e ferramentas MCP só chamam os serviços, sem duplicar lógica.
+- Toda ação de grupo (REST ou MCP) grava em acoes_agente.
+- Erros sempre no formato {"erro": "mensagem"}.
