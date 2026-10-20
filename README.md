@@ -19,7 +19,13 @@ Abra o `.env` e preencha `DATABASE_URL` (Neon) e `ADMIN_KEY`. Não commite esse 
 uvicorn app.main:app --reload
 ```
 
-Abra [http://localhost:8000/docs](http://localhost:8000/docs) para ver as rotas e [http://localhost:8000/api/status](http://localhost:8000/api/status) para checar a API e o banco.
+Abra [http://localhost:8000/docs](http://localhost:8000/docs) para ver as rotas e [http://localhost:8000/api/status](http://localhost:8000/api/status) para checar a API, o banco e o MCP.
+
+O MCP fica em [http://localhost:8000/mcp](http://localhost:8000/mcp). No Langflow, o header é `Authorization: Bearer <token do grupo>`. Para provar daqui:
+
+```powershell
+python scripts/testar_mcp.py <token>
+```
 
 ## Banco
 

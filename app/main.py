@@ -11,6 +11,7 @@ from starlette.exceptions import HTTPException
 from app.config import config
 from app.db import abrir_pool, fechar_pool
 from app.erros import ErroAPI
+from app.mcp_servidor import aplicacao_http, mcp
 from app.rotas.admin import router as admin
 from app.rotas.grupo import router as grupo
 from app.rotas.publico import router as publico
@@ -21,7 +22,8 @@ LIMITE_CORPO = 100 * 1024
 @asynccontextmanager
 async def ciclo_de_vida(_: FastAPI):
     abrir_pool()
-    yield
+    async with mcp.session_manager.run():
+        yield
     fechar_pool()
 
 
@@ -83,6 +85,8 @@ app.add_middleware(
 app.include_router(publico)
 app.include_router(grupo)
 app.include_router(admin)
+# O app do MCP tem a rota "/". Pendurar em /mcp deixa o endereço exatamente /mcp.
+app.mount("/mcp", aplicacao_http)
 
 
 def _texto(detalhe: object) -> str:

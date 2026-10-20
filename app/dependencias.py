@@ -12,7 +12,7 @@ from app.servicos.config import esta_pausado
 from app.servicos.grupos import por_token
 
 
-def grupo_atual(authorization: Annotated[str | None, Header()] = None) -> dict:
+def grupo_pelo_cabecalho(authorization: str | None) -> dict:
     """Lê Authorization: Bearer. 401 se o token não existe, 403 se o grupo foi desativado."""
     if not authorization or not authorization.lower().startswith("bearer "):
         raise ErroAPI(401, "Token do grupo ausente ou inválido")
@@ -27,12 +27,21 @@ def grupo_atual(authorization: Annotated[str | None, Header()] = None) -> dict:
     return grupo
 
 
-def exigir_acao(grupo: dict = Depends(grupo_atual)) -> dict:
-    """Ação de grupo: bloqueia quando o instrutor pausou e quando estourou o limite."""
+def grupo_atual(authorization: Annotated[str | None, Header()] = None) -> dict:
+    return grupo_pelo_cabecalho(authorization)
+
+
+def preparar_acao(grupo: dict) -> dict:
+    """Bloqueia quando o instrutor pausou e quando o grupo estourou o limite."""
     if esta_pausado():
         raise ErroAPI(423, "Agentes pausados pelo instrutor")
     limites.consumir_acao(grupo["id"])
     return grupo
+
+
+def exigir_acao(grupo: dict = Depends(grupo_atual)) -> dict:
+    """Ação de grupo pela rota REST."""
+    return preparar_acao(grupo)
 
 
 def exigir_admin(x_admin_key: Annotated[str | None, Header()] = None) -> None:

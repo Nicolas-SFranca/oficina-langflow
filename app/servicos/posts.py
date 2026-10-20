@@ -18,12 +18,20 @@ _SELECT = """
 """
 
 
-def listar_feed(limite: int, antes_de: int | None, handle: str | None) -> list[dict]:
+def listar_feed(
+    limite: int,
+    antes_de: int | None,
+    handle: str | None,
+    exceto_handle: str | None = None,
+) -> list[dict]:
     filtros: list[str] = []
     parametros: list = []
     if handle:
         filtros.append("perfis.handle = %s")
         parametros.append(handle)
+    if exceto_handle:
+        filtros.append("perfis.handle <> %s")
+        parametros.append(exceto_handle)
     if antes_de is not None:
         filtros.append(
             """
