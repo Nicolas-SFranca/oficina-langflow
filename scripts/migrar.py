@@ -53,11 +53,10 @@ def preparar(texto: str, nome: str, senha_aluno: str) -> str:
     return script.rstrip() + f"\nINSERT INTO schema_migrations (nome) VALUES ('{nome_seguro}');\n"
 
 
-def main() -> None:
-    ambiente = ler_env(RAIZ / ".env")
-    url = ambiente.get("DATABASE_URL", "")
+def aplicar(url: str, senha_aluno: str = "") -> None:
+    """Aplica cada arquivo de migrations/ uma vez na URL informada."""
     if not url:
-        raise SystemExit("Falta DATABASE_URL no .env.")
+        raise SystemExit("Falta a URL do banco.")
 
     arquivos = sorted(PASTA.glob("*.sql"))
     if not arquivos:
@@ -84,16 +83,20 @@ def main() -> None:
                 print(f"já aplicada: {arquivo.name}")
                 continue
             texto = arquivo.read_text(encoding="utf-8")
-            script = preparar(texto, arquivo.name, ambiente.get("ALUNO_LEITURA_SENHA", ""))
+            script = preparar(texto, arquivo.name, senha_aluno)
             try:
                 executar_script(conexao, script)
             except (psycopg.Error, RuntimeError) as erro:
                 mensagem = str(erro)
-                senha = ambiente.get("ALUNO_LEITURA_SENHA", "")
-                if senha:
-                    mensagem = mensagem.replace(senha, "[oculto]")
+                if senha_aluno:
+                    mensagem = mensagem.replace(senha_aluno, "[oculto]")
                 raise SystemExit(f"Falhou em {arquivo.name}: {mensagem}") from None
             print(f"aplicada: {arquivo.name}")
+
+
+def main() -> None:
+    ambiente = ler_env(RAIZ / ".env")
+    aplicar(ambiente.get("DATABASE_URL", ""), ambiente.get("ALUNO_LEITURA_SENHA", ""))
 
 
 if __name__ == "__main__":

@@ -41,6 +41,15 @@ python scripts/seed.py
 
 O script apaga posts, comentários, curtidas e grupos e grava de novo. A linha `pausado` de `config` fica. Se os grupos já existiam, os tokens são os mesmos. Guarde os 6 tokens impressos no final: eles não entram no Git.
 
+## Testes
+
+Coloque em `TEST_DATABASE_URL` a connection string da branch `testes`. Os testes aplicam as migrations, recriam os dados e chamam a API. Eles recusam rodar se essa URL for a mesma do `DATABASE_URL`.
+
+```powershell
+pip install -r requirements.txt
+pytest
+```
+
 ## Vercel
 
 O backend sobe na Vercel no lugar do Render. O `app` em `app/main.py` é o ponto de entrada. As mesmas variáveis do `.env` ficam nas variáveis de ambiente do projeto, nunca no Git. Depois do deploy, `PUBLIC_API_URL` deve ser a URL pública da Vercel, sem barra no final.
