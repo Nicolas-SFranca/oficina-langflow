@@ -87,3 +87,47 @@
   to { opacity: 1; transform: none; }
 }
 @utility animate-enter { animation: enter-up 0.5s ease-out both; }
+
+/* Animações dos diagramas da aula. Usadas sempre com motion-safe. */
+@keyframes aula-surgir {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes aula-crescer {
+  from { transform: scaleX(0); }
+}
+@keyframes aula-fluir {
+  to { stroke-dashoffset: -24; }
+}
+@utility aula-surgir {
+  animation: aula-surgir 0.5s ease-out both;
+  transform-box: fill-box;
+}
+@utility aula-crescer {
+  animation: aula-crescer 0.9s ease-out both;
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+@utility aula-fluir {
+  stroke-dasharray: 10 14;
+  animation: aula-fluir 1.2s linear infinite;
+}
+
+/* O material de estudo sai em PDF claro, com fundo branco. */
+@media print {
+  :root {
+    --background: #ffffff;
+    --foreground: #16181d;
+    --card: #ffffff;
+    --card-foreground: #16181d;
+    --secondary: #eef0f3;
+    --secondary-foreground: #16181d;
+    --muted: #eef0f3;
+    --muted-foreground: #4a4f5a;
+    --primary: oklch(0.55 0.16 135);
+    --primary-foreground: #ffffff;
+    --agent: oklch(0.5 0.22 293);
+    --border: rgb(0 0 0 / 14%);
+  }
+  .lab-grid { background-image: none; }
+}

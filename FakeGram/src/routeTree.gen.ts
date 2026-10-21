@@ -16,6 +16,9 @@ import { Route as GrupoRouteImport } from './routes/grupo'
 import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as StatusRouteImport } from './routes/status'
 import { Route as TelaoRouteImport } from './routes/telao'
+import { Route as AulaIndexRouteImport } from './routes/aula.index'
+import { Route as AulaApresentadorRouteImport } from './routes/aula.apresentador'
+import { Route as AulaEstudoRouteImport } from './routes/aula.estudo'
 import { Route as ExerciciosNRouteImport } from './routes/exercicios.$n'
 import { Route as PerfilHandleRouteImport } from './routes/perfil.$handle'
 import { Route as PostIdRouteImport } from './routes/post.$id'
@@ -55,6 +58,21 @@ const TelaoRoute = TelaoRouteImport.update({
   path: '/telao',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AulaIndexRoute = AulaIndexRouteImport.update({
+  id: '/aula/',
+  path: '/aula/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AulaApresentadorRoute = AulaApresentadorRouteImport.update({
+  id: '/aula/apresentador',
+  path: '/aula/apresentador',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AulaEstudoRoute = AulaEstudoRouteImport.update({
+  id: '/aula/estudo',
+  path: '/aula/estudo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExerciciosNRoute = ExerciciosNRouteImport.update({
   id: '/exercicios/$n',
   path: '/exercicios/$n',
@@ -79,9 +97,12 @@ export interface FileRoutesByFullPath {
   '/ranking': typeof RankingRoute
   '/status': typeof StatusRoute
   '/telao': typeof TelaoRoute
+  '/aula/apresentador': typeof AulaApresentadorRoute
+  '/aula/estudo': typeof AulaEstudoRoute
   '/exercicios/$n': typeof ExerciciosNRoute
   '/perfil/$handle': typeof PerfilHandleRoute
   '/post/$id': typeof PostIdRoute
+  '/aula/': typeof AulaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -91,9 +112,12 @@ export interface FileRoutesByTo {
   '/ranking': typeof RankingRoute
   '/status': typeof StatusRoute
   '/telao': typeof TelaoRoute
+  '/aula/apresentador': typeof AulaApresentadorRoute
+  '/aula/estudo': typeof AulaEstudoRoute
   '/exercicios/$n': typeof ExerciciosNRoute
   '/perfil/$handle': typeof PerfilHandleRoute
   '/post/$id': typeof PostIdRoute
+  '/aula': typeof AulaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -104,9 +128,12 @@ export interface FileRoutesById {
   '/ranking': typeof RankingRoute
   '/status': typeof StatusRoute
   '/telao': typeof TelaoRoute
+  '/aula/apresentador': typeof AulaApresentadorRoute
+  '/aula/estudo': typeof AulaEstudoRoute
   '/exercicios/$n': typeof ExerciciosNRoute
   '/perfil/$handle': typeof PerfilHandleRoute
   '/post/$id': typeof PostIdRoute
+  '/aula/': typeof AulaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -118,9 +145,12 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/status'
     | '/telao'
+    | '/aula/apresentador'
+    | '/aula/estudo'
     | '/exercicios/$n'
     | '/perfil/$handle'
     | '/post/$id'
+    | '/aula/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -130,9 +160,12 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/status'
     | '/telao'
+    | '/aula/apresentador'
+    | '/aula/estudo'
     | '/exercicios/$n'
     | '/perfil/$handle'
     | '/post/$id'
+    | '/aula'
   id:
     | '__root__'
     | '/'
@@ -142,9 +175,12 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/status'
     | '/telao'
+    | '/aula/apresentador'
+    | '/aula/estudo'
     | '/exercicios/$n'
     | '/perfil/$handle'
     | '/post/$id'
+    | '/aula/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -155,9 +191,12 @@ export interface RootRouteChildren {
   RankingRoute: typeof RankingRoute
   StatusRoute: typeof StatusRoute
   TelaoRoute: typeof TelaoRoute
+  AulaApresentadorRoute: typeof AulaApresentadorRoute
+  AulaEstudoRoute: typeof AulaEstudoRoute
   ExerciciosNRoute: typeof ExerciciosNRoute
   PerfilHandleRoute: typeof PerfilHandleRoute
   PostIdRoute: typeof PostIdRoute
+  AulaIndexRoute: typeof AulaIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -211,6 +250,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TelaoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/aula/': {
+      id: '/aula/'
+      path: '/aula'
+      fullPath: '/aula/'
+      preLoaderRoute: typeof AulaIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aula/apresentador': {
+      id: '/aula/apresentador'
+      path: '/aula/apresentador'
+      fullPath: '/aula/apresentador'
+      preLoaderRoute: typeof AulaApresentadorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aula/estudo': {
+      id: '/aula/estudo'
+      path: '/aula/estudo'
+      fullPath: '/aula/estudo'
+      preLoaderRoute: typeof AulaEstudoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/exercicios/$n': {
       id: '/exercicios/$n'
       path: '/exercicios/$n'
@@ -243,9 +303,12 @@ const rootRouteChildren: RootRouteChildren = {
   RankingRoute: RankingRoute,
   StatusRoute: StatusRoute,
   TelaoRoute: TelaoRoute,
+  AulaApresentadorRoute: AulaApresentadorRoute,
+  AulaEstudoRoute: AulaEstudoRoute,
   ExerciciosNRoute: ExerciciosNRoute,
   PerfilHandleRoute: PerfilHandleRoute,
   PostIdRoute: PostIdRoute,
+  AulaIndexRoute: AulaIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

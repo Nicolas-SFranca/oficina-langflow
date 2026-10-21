@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "fakegram",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "FakeGram", "run", "dev"],
+      "port": 8080
+    }
+  ]
+}

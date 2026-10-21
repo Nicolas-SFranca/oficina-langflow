@@ -100,6 +100,7 @@ function NavItem({ item, className, onClick }: { item: (typeof NAV)[number]; cla
 
 const NAV = [
   { to: "/feed", label: "Feed" },
+  { to: "/aula/estudo", label: "Aula" },
   { to: "/exercicios/$n", params: { n: "1" }, label: "Exercícios" },
   { to: "/ranking", label: "Ranking" },
   { to: "/grupo", label: "Meu grupo" },
@@ -119,10 +120,16 @@ function PausaBanner() {
 function Shell() {
   const [aberto, setAberto] = useState(false);
   const path = useRouterState({ select: (s) => s.location.pathname });
-  if (path.startsWith("/telao")) return <Outlet />;
+  // Telão, apresentação e painel do instrutor ocupam a tela inteira, sem menu.
+  const telaCheia =
+    path.startsWith("/telao") ||
+    path === "/aula" ||
+    path === "/aula/" ||
+    path.startsWith("/aula/apresentador");
+  if (telaCheia) return <Outlet />;
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="sticky top-0 z-40">
+      <div className="sticky top-0 z-40 print:hidden">
         <PausaBanner />
         <header className="border-b bg-background/85 backdrop-blur">
           <div className="mx-auto flex h-14 max-w-6xl items-center gap-6 px-4">
@@ -145,7 +152,7 @@ function Shell() {
       <main className="mx-auto w-full min-w-0 max-w-6xl flex-1 px-4 py-8">
         <Outlet />
       </main>
-      <footer className="border-t py-6 text-xs text-muted-foreground">
+      <footer className="border-t py-6 text-xs text-muted-foreground print:hidden">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4">
           <span>Fakegram · Oficina Langflow — rede fictícia para fins didáticos{MODO_DEMO && " · modo demonstração (dados falsos)"}</span>
           <Link to="/admin" className="opacity-50 hover:opacity-100">instrutor</Link>
