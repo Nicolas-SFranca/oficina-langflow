@@ -166,8 +166,10 @@ def responder_comentario(ctx: Context, comentario_id: int, texto: str) -> dict:
     return _comentario_curto(criado)
 
 
+# hashtags sem "| None": o Langflow transforma o anyOf de lista ou nulo num ARRAY sem
+# items, e o Gemini recusa a ferramenta inteira com 400. A lista padrão nunca é alterada.
 @mcp.tool()
-def publicar_post(ctx: Context, legenda: str, hashtags: list[str] | None = None) -> dict:
+def publicar_post(ctx: Context, legenda: str, hashtags: list[str] = []) -> dict:  # noqa: B006
     """Publica um post novo no próprio perfil.
 
     O parâmetro legenda é o texto do post, até 1000 caracteres. hashtags é uma
