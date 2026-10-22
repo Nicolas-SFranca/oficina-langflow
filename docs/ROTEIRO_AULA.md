@@ -4,6 +4,9 @@ Oficina de Langflow, MCP e RAG para Sistemas de Informação, do 2º ao 6º seme
 
 ## Onde está cada coisa
 
+- **Site da aula (FakeGram):** https://fakegram-oficina.vercel.app. Os caminhos abaixo são deste endereço.
+- **API e MCP:** https://oficina-langflow.vercel.app (o MCP fica em `/mcp`).
+
 O conteúdo slide a slide (o que aparece na tela, a fala, a pergunta para a turma, as notas de palco e a teoria para revisar) tem uma fonte só: `FakeGram/src/content/aula.ts`. Este guia não repete esse conteúdo.
 
 | Para | Abra |

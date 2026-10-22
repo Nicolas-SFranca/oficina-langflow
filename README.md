@@ -60,4 +60,21 @@ pytest
 
 O backend sobe na Vercel no lugar do Render. O `app` em `app/main.py` é o ponto de entrada. As mesmas variáveis do `.env` ficam nas variáveis de ambiente do projeto, nunca no Git. Depois do deploy, `PUBLIC_API_URL` deve ser a URL pública da Vercel, sem barra no final.
 
+Os dois projetos da Vercel não estão ligados ao GitHub: o push não publica. Publique pela CLI.
+
+| Projeto | Endereço | Como publicar |
+|---|---|---|
+| `oficina-langflow` (API e MCP) | https://oficina-langflow.vercel.app | Na raiz: `npx vercel deploy --prod` |
+| `fakegram-oficina` (site e slides) | https://fakegram-oficina.vercel.app | Em `FakeGram/`: o build abaixo |
+
+O FakeGram usa a configuração do Lovable, que gera para a Cloudflare por padrão. Para a Vercel, troque o destino na hora do build e publique o resultado pronto:
+
+```bash
+cd FakeGram
+NITRO_PRESET=vercel npx vite build
+npx vercel deploy --prebuilt --prod
+```
+
+A API só aceita chamadas do navegador vindas de `https://fakegram-oficina.vercel.app` e de sites `*.lovable.app` (`allow_origin_regex` em `app/main.py`), além do que estiver em `CORS_ORIGINS`.
+
 No bash, a ativação do venv é `source .venv/bin/activate` e a cópia do exemplo é `cp .env.example .env`.
