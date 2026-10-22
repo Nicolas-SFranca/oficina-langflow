@@ -35,10 +35,24 @@ def _cabecalho_autorizacao(ctx: Context) -> str | None:
 
 
 def _grupo(ctx: Context) -> dict:
+    cabecalho = _cabecalho_autorizacao(ctx)
     try:
-        return grupo_pelo_cabecalho(_cabecalho_autorizacao(ctx))
+        return grupo_pelo_cabecalho(cabecalho)
     except ErroAPI as erro:
         if erro.status == 401:
+            # Diagnóstico sem expor o token: só presença, prefixo e tamanho.
+            pedido = ctx.request_context.request
+            print(
+                "mcp 401:",
+                {
+                    "pedido": type(pedido).__name__,
+                    "tem_cabecalho": cabecalho is not None,
+                    "bearer": bool(cabecalho and cabecalho.lower().startswith("bearer ")),
+                    "tamanho": len(cabecalho or ""),
+                    "nomes": sorted(getattr(pedido, "headers", {}).keys()) if pedido is not None else None,
+                },
+                flush=True,
+            )
             raise ErroAPI(401, MENSAGEM_TOKEN) from None
         raise
 
