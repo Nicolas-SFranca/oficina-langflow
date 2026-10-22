@@ -25,18 +25,18 @@ export const Route = createFileRoute("/grupo")({
 const BASE = (API_URL || "https://api.fakegram.exemplo.com").replace(/\/$/, "");
 
 const KIT = [
-  "Fluxos do Langflow (exercícios 1, 2 e 3)",
+  "Guias dos exercícios 1, 2 e 3 (LEIAME de cada pasta)",
   ".env pré-configurado com a URL e o token do grupo",
-  "Código do MCP local (servidor Python)",
-  "Script de integração em Python (chamar_fluxo.py)",
+  "Servidor MCP local do exercício 3, em três níveis",
+  "Bônus: agente analista e o manual da marca para RAG",
 ];
 
 const PASSOS_MCP = [
-  "Abra o Langflow e entre em Settings.",
-  "Abra MCP Servers.",
-  "Clique em Add MCP Server.",
-  "Escolha o transporte HTTP/SSE.",
+  "No Langflow, abra Servidores MCP na barra da esquerda.",
+  "Clique em Incluir servidor MCP.",
+  "Escolha a opção de servidor HTTP.",
   "Cole a URL e o header abaixo e salve.",
+  "No fluxo, use o componente MCP Tools com este servidor, em Tool Mode.",
 ];
 
 function snippets(token: string) {

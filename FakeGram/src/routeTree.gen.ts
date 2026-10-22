@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as FeedRouteImport } from './routes/feed'
 import { Route as GrupoRouteImport } from './routes/grupo'
+import { Route as PrepararRouteImport } from './routes/preparar'
 import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as StatusRouteImport } from './routes/status'
 import { Route as TelaoRouteImport } from './routes/telao'
@@ -41,6 +42,11 @@ const FeedRoute = FeedRouteImport.update({
 const GrupoRoute = GrupoRouteImport.update({
   id: '/grupo',
   path: '/grupo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrepararRoute = PrepararRouteImport.update({
+  id: '/preparar',
+  path: '/preparar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RankingRoute = RankingRouteImport.update({
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/feed': typeof FeedRoute
   '/grupo': typeof GrupoRoute
+  '/preparar': typeof PrepararRoute
   '/ranking': typeof RankingRoute
   '/status': typeof StatusRoute
   '/telao': typeof TelaoRoute
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/feed': typeof FeedRoute
   '/grupo': typeof GrupoRoute
+  '/preparar': typeof PrepararRoute
   '/ranking': typeof RankingRoute
   '/status': typeof StatusRoute
   '/telao': typeof TelaoRoute
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/feed': typeof FeedRoute
   '/grupo': typeof GrupoRoute
+  '/preparar': typeof PrepararRoute
   '/ranking': typeof RankingRoute
   '/status': typeof StatusRoute
   '/telao': typeof TelaoRoute
@@ -142,6 +151,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/feed'
     | '/grupo'
+    | '/preparar'
     | '/ranking'
     | '/status'
     | '/telao'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/feed'
     | '/grupo'
+    | '/preparar'
     | '/ranking'
     | '/status'
     | '/telao'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/feed'
     | '/grupo'
+    | '/preparar'
     | '/ranking'
     | '/status'
     | '/telao'
@@ -188,6 +200,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   FeedRoute: typeof FeedRoute
   GrupoRoute: typeof GrupoRoute
+  PrepararRoute: typeof PrepararRoute
   RankingRoute: typeof RankingRoute
   StatusRoute: typeof StatusRoute
   TelaoRoute: typeof TelaoRoute
@@ -227,6 +240,13 @@ declare module '@tanstack/react-router' {
       path: '/grupo'
       fullPath: '/grupo'
       preLoaderRoute: typeof GrupoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preparar': {
+      id: '/preparar'
+      path: '/preparar'
+      fullPath: '/preparar'
+      preLoaderRoute: typeof PrepararRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ranking': {
@@ -300,6 +320,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   FeedRoute: FeedRoute,
   GrupoRoute: GrupoRoute,
+  PrepararRoute: PrepararRoute,
   RankingRoute: RankingRoute,
   StatusRoute: StatusRoute,
   TelaoRoute: TelaoRoute,
