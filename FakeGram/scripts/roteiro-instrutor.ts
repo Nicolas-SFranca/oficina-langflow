@@ -355,7 +355,14 @@ function pagina(): string {
   const corpo = markdown(guia).replace(MARCA_DOS_SLIDES, minutoAMinuto());
   const exercicios = `<h2 id="exercicios">Os exercícios, como os alunos veem no kit</h2>
 <p class="dica">Os LEIAME do kit, com o endereço do MCP já preenchido. O token e o perfil vêm do kit de cada grupo.</p>
-${["kit_template/ex1/LEIAME.md", "kit_template/ex2/LEIAME.md", "kit_template/ex3/LEIAME.md"].map(exercicio).join("\n")}`;
+${[
+  "kit_template/ex1/LEIAME.md",
+  "kit_template/ex2/LEIAME.md",
+  "kit_template/ex3/LEIAME.md",
+  "kit_template/bonus/analista/LEIAME.md",
+]
+  .map(exercicio)
+  .join("\n")}`;
   const conteudo = corpo + "\n" + exercicios;
   return `<!doctype html>
 <html lang="pt-BR">

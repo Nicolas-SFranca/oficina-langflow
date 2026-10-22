@@ -4,11 +4,21 @@ Aqui o agente consulta o banco do Fakegram e procura padrões de engajamento. As
 
 O acesso é só de leitura. O usuário do `NEON_RO_URL` enxerga perfis, posts, comentários, curtidas e as views de engajamento. Tabelas de gabarito, grupos e configuração ficam de fora.
 
+## Instalar o driver do Postgres (uma vez)
+
+O Langflow Desktop não vem com o driver que o **SQL Database** usa para falar com o Postgres. No PowerShell:
+
+```powershell
+& "$env:LOCALAPPDATA\com.LangflowDesktop\.langflow-venv\Scripts\python.exe" -m pip install psycopg2-binary
+```
+
+Depois feche e abra o Langflow de novo. No macOS ou no Linux, o Python do Langflow fica em outra pasta: peça ajuda ao instrutor.
+
 ## Montar o fluxo
 
 1. Fluxo novo: **Campo de entrada de bate-papo** → **Agente** → **Saída do chat**.
 2. Arraste o componente **SQL Database** (em **Origens de dados**).
-3. Em **Database URL**, cole o valor de `NEON_RO_URL` do `.env`. Se aparecer erro de driver, troque o começo `postgresql://` por `postgresql+psycopg://`.
+3. Em **Database URL**, cole o valor de `NEON_RO_URL` do `.env`, do jeito que está. Se aparecer `No module named 'psycopg2'`, falta instalar o driver ou reiniciar o Langflow.
 4. Ligue o **Tool Mode** e conecte o **Conjunto de ferramentas** na entrada **Ferramentas** do Agente.
 5. Em **Instruções para o agente**:
 

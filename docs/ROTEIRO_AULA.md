@@ -48,7 +48,7 @@ Três fios costuram as práticas:
 
 **Quem paga o quê.** Cada aluno usa a chave gratuita do Gemini da própria conta Google. A API, o MCP e o banco rodam nos planos gratuitos da Vercel e do Neon. Você só gasta cota se emprestar a sua chave de reserva.
 
-**Para quem termina antes.** Os bônus do kit: `bonus/rag` (chatbot com o manual da marca) e `bonus/analista` (agente que consulta o banco só para leitura). O analista precisa da `NEON_READONLY_URL` configurada na API; sem ela, o kit vai com esse campo vazio e o bônus não conecta.
+**Para quem termina antes.** Os bônus do kit: `bonus/rag` (chatbot com o manual da marca) e `bonus/analista` (agente que consulta o banco só para leitura). O analista usa a `NEON_READONLY_URL` configurada na API, que vai no `.env` do kit, e pede para instalar o driver do Postgres no Langflow, com o comando do LEIAME do bônus. Rode esse comando no seu Langflow antes do ensaio.
 
 ## O tempo
 
