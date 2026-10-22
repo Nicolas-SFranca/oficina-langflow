@@ -18,7 +18,7 @@ export const Route = createFileRoute("/preparar")({
   component: Preparar,
 });
 
-type Item = { titulo: string; texto: string; codigo?: string };
+type Item = { titulo: string; texto: string; passos?: string[]; aviso?: string; codigo?: string };
 
 const ITENS: Item[] = [
   {
@@ -27,14 +27,21 @@ const ITENS: Item[] = [
       "Baixe em langflow.org/desktop e abra uma vez. Pronto quando aparecer a tela de Projetos. No Windows, se o instalador pedir o C++ Build Tools, aceite.",
   },
   {
-    titulo: "Tenha uma chave de modelo",
+    titulo: "Crie a sua chave gratuita do Gemini",
     texto:
-      "Se o instrutor não avisou que vai entregar uma chave por grupo, crie a sua no Google AI Studio (Get API key). A chave é uma senha: não mande em grupo e não poste em lugar nenhum.",
+      "A aula usa o Gemini, do Google, no nível gratuito, sem cartão de crédito. Cada pessoa cria a própria chave, na própria conta Google. Leva uns 2 minutos.",
+    passos: [
+      "Entre em aistudio.google.com/apikey com a sua conta Google pessoal. Conta da faculdade às vezes bloqueia o AI Studio.",
+      "Clique em Get API key e depois em Create API key. Se ele pedir um projeto, crie um novo.",
+      "Copie a chave na hora: ela aparece inteira só uma vez. Guarde num lugar seguro, como o gerenciador de senhas do navegador.",
+    ],
+    aviso:
+      "A chave é uma senha: não mande no grupo, não poste e não coloque em código. No nível gratuito, o Google pode usar o que você envia para melhorar os produtos, então não cole dados pessoais nem de clientes.",
   },
   {
     titulo: "Configure o modelo no Langflow",
     texto:
-      'Abra o modelo Sugestões básicas, escolha o provedor Google Generative AI, cole a chave e mande "oi" no Playground. Se ele responder, está tudo certo.',
+      'Abra o modelo Sugestões básicas, escolha o provedor Google Generative AI, cole a chave e mande "oi" no Playground. Se ele responder, está tudo certo. Se aparecer erro 429 ou "quota", é o limite por minuto do nível gratuito: espere um pouco e tente de novo.',
   },
   {
     titulo: "Tenha o Python 3.11 ou mais novo",
@@ -87,6 +94,18 @@ function Preparar() {
                 <p className="mt-1 text-sm text-muted-foreground">{item.texto}</p>
               </div>
             </label>
+            {item.passos && (
+              <ol className="ml-8 mt-3 list-decimal space-y-1 pl-5 text-sm text-muted-foreground">
+                {item.passos.map((passo) => (
+                  <li key={passo}>{passo}</li>
+                ))}
+              </ol>
+            )}
+            {item.aviso && (
+              <p className="ml-8 mt-3 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+                {item.aviso}
+              </p>
+            )}
             {item.codigo && (
               <div className="mt-3">
                 <CodeBlock codigo={item.codigo} />
@@ -96,6 +115,23 @@ function Preparar() {
         ))}
       </ol>
       <div className="mt-8 rounded-2xl border bg-card p-5 text-sm text-muted-foreground">
+        <p className="font-semibold text-foreground">Não conseguiu criar a chave do Gemini?</p>
+        <ul className="mt-2 list-disc space-y-1 pl-5">
+          <li>
+            <span className="text-foreground">OpenRouter:</span> uma conta em openrouter.ai dá
+            acesso a modelos gratuitos (os que terminam em <code>:free</code>), sem cartão. O limite
+            é baixo, por volta de 50 pedidos por dia, então use só como reserva. No Langflow,
+            escolha o provedor OpenRouter.
+          </li>
+          <li>
+            <span className="text-foreground">Ollama:</span> roda modelos no seu computador, sem
+            chave e sem custo, se a máquina for boa (16 GB de memória ou mais). Modelos pequenos
+            erram mais na hora de escolher ferramentas.
+          </li>
+          <li>Se nada der certo, faça a aula em dupla com quem tem chave.</li>
+        </ul>
+      </div>
+      <div className="mt-4 rounded-2xl border bg-card p-5 text-sm text-muted-foreground">
         <p className="font-semibold text-foreground">No dia</p>
         <p className="mt-1">
           Vocês formam grupos de 3 ou 4 pessoas e recebem o token do grupo. Cada grupo cuida de uma

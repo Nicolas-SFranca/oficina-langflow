@@ -44,7 +44,7 @@ O painel compara o tempo real com o minuto planejado de cada slide e diz se voc�
 
 ### Decisões que precisam estar tomadas
 
-- **Chave do modelo.** Recomendação: uma chave paga por grupo, com limite de gasto, revogada depois da aula. Pela minha estimativa, a aula inteira custa algo entre US$ 10 e 20 no Gemini Flash. O nível gratuito tem limite por minuto baixo, e um agente faz várias chamadas por pedido; ele fica só de reserva. Confira os limites e os termos de uso de dados na página oficial do Google.
+- **Chave do modelo (decidido).** Cada aluno cria a chave gratuita do Gemini na própria conta Google, com o passo a passo de `/preparar`. Reservas: OpenRouter com modelos gratuitos (limite baixo, por volta de 50 pedidos por dia sem créditos) e Ollama em máquina boa. Com a `fila_de_comentarios`, responder a fila custa poucas chamadas, então o limite por minuto do nível gratuito tende a bastar; confirme no ensaio. Leve uma chave sua de reserva para quem ficar sem.
 - **Notebook próprio ou laboratório.** No laboratório, instale o Langflow Desktop e o Python antes.
 
 ### Uma semana antes
@@ -60,7 +60,7 @@ O painel compara o tempo real com o minuto planejado de cada slide e diz se voc�
 - [ ] Tokens dos grupos prontos para entregar no S06.
 - [ ] `/telao` aberto num segundo monitor.
 - [ ] Seu agente do grupo demonstração rodando, para o S04: `python ex3/chamar_fluxo.py --loop`.
-- [ ] Chaves de reserva à mão, nunca coladas à vista no projetor.
+- [ ] Sua chave de reserva à mão, nunca colada à vista no projetor.
 - [ ] Web Search testado no Wi-Fi do local.
 
 ## Durante a aula
@@ -72,7 +72,7 @@ O painel compara o tempo real com o minuto planejado de cada slide e diz se voc�
 ## Depois da aula
 
 - [ ] Liberar o kit de estudo no `/admin`. Ele vai sem token, sem a senha do banco e com os gabaritos.
-- [ ] Revogar os tokens dos grupos e as chaves de modelo distribuídas.
+- [ ] Revogar os tokens dos grupos e a sua chave de reserva, se ela foi usada por alguém.
 
 ## Perguntas que costumam aparecer
 

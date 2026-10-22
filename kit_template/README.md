@@ -12,7 +12,7 @@ Este zip é o material do seu grupo. O `.env` já traz o endereço da API, o end
 
 ## Antes de começar
 
-1. Langflow Desktop aberto, com um modelo configurado (o instrutor diz qual chave usar).
+1. Langflow Desktop aberto, com o Gemini configurado com a chave gratuita de vocês (passo a passo na página /preparar do Fakegram).
 2. Python 3.11 ou mais novo. Só o `ex3/` precisa.
 
 Para o `ex3/`, na pasta deste kit, no PowerShell:
