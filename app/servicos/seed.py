@@ -352,6 +352,8 @@ def recriar_dados() -> dict:
     """Apaga a rede de exemplo e cria de novo. A tabela config fica como está.
 
     Se os grupos já existiam, os tokens são os mesmos. Na primeira vez, são novos.
+    Grupos criados no /admin além dos seis (o do instrutor, por exemplo) voltam com o
+    mesmo nome, token e perfil, desde que o perfil não seja de um dos seis.
     """
     if db.pool is None:
         raise RuntimeError("Banco indisponível")
@@ -362,8 +364,15 @@ def recriar_dados() -> dict:
 
     with db.pool.connection() as conexao:
         with conexao.cursor() as cursor:
-            cursor.execute("SELECT nome, token FROM grupos")
-            tokens_antigos = {linha["nome"]: linha["token"] for linha in cursor.fetchall()}
+            cursor.execute(
+                """
+                SELECT grupos.nome, grupos.token, grupos.ativo, perfis.handle
+                FROM grupos JOIN perfis ON perfis.id = grupos.perfil_id
+                ORDER BY grupos.id
+                """
+            )
+            grupos_antigos = cursor.fetchall()
+            tokens_antigos = {linha["nome"]: linha["token"] for linha in grupos_antigos}
 
             cursor.execute(
                 """
@@ -538,6 +547,22 @@ def recriar_dados() -> dict:
                     (nome, token, perfil_ids[marca["handle"]]),
                 )
                 grupos.append({"nome": nome, "handle": marca["handle"], "token": token})
+
+            ocupados = {grupo["handle"] for grupo in grupos} | {grupo["nome"] for grupo in grupos}
+            for antigo in grupos_antigos:
+                if antigo["nome"] in ocupados or antigo["handle"] in ocupados:
+                    continue
+                if antigo["handle"] not in perfil_ids:
+                    continue
+                cursor.execute(
+                    """
+                    INSERT INTO grupos (nome, token, ativo, perfil_id, pontos)
+                    VALUES (%s, %s, %s, %s, 0)
+                    """,
+                    (antigo["nome"], antigo["token"], antigo["ativo"], perfil_ids[antigo["handle"]]),
+                )
+                ocupados |= {antigo["nome"], antigo["handle"]}
+                grupos.append({"nome": antigo["nome"], "handle": antigo["handle"], "token": antigo["token"]})
 
             return {
                 "perfis": len(MARCAS),
