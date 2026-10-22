@@ -371,6 +371,7 @@ function BlocoView({ bloco, duasColunas = false }: { bloco: Bloco; duasColunas?:
               className={cn(
                 "block h-auto max-w-full rounded-[0.5em] border",
                 modo === "palco" && "max-h-[17em]",
+                modo === "documento" && bloco.retrato && "max-w-64",
               )}
             />
             {bloco.marcadores?.map((m) => (

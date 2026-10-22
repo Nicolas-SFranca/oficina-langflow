@@ -29,7 +29,8 @@ export type Bloco =
   | { tipo: "tabela"; colunas: string[]; linhas: string[][] }
   | { tipo: "codigo"; codigo: string }
   | { tipo: "diagrama"; nome: NomeDiagrama }
-  | { tipo: "imagem"; src: string; alt: string; marcadores?: Marcador[] }
+  /** retrato: foto de pessoa, que não ocupa a largura toda no material de estudo. */
+  | { tipo: "imagem"; src: string; alt: string; marcadores?: Marcador[]; retrato?: boolean }
   | { tipo: "cartoes"; itens: { titulo: string; texto: string }[] }
   | { tipo: "destaque"; texto: string; autor?: string }
   | { tipo: "tokenizador" }
@@ -117,7 +118,9 @@ const RASCUNHO: Omit<Slide, "id">[] = [
     bloco: "abertura",
     titulo: "Quem sou eu",
     minutos: [1, 2],
+    colunas: true,
     conteudo: [
+      { tipo: "imagem", src: "/aula/nicolas.jpg", alt: "Foto de Nicolas França", retrato: true },
       {
         tipo: "cartoes",
         itens: [
