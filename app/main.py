@@ -73,6 +73,22 @@ class LimiteDeCorpo:
         await self.app(scope, repetir, send)
 
 
+class McpSemBarra:
+    """Faz /mcp responder como /mcp/, sem redirecionar.
+
+    Pendurado em /mcp, o Starlette responde 307 para /mcp/. O cliente MCP do
+    Langflow não segue redirecionamentos, então o endereço do kit falharia.
+    """
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "http" and scope["path"] == "/mcp":
+            scope = {**scope, "path": "/mcp/", "raw_path": b"/mcp/"}
+        await self.app(scope, receive, send)
+
+
 app = FastAPI(title="Fakegram API", lifespan=ciclo_de_vida)
 app.add_middleware(LimiteDeCorpo)
 app.add_middleware(
@@ -82,6 +98,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(McpSemBarra)
 app.include_router(publico)
 app.include_router(grupo)
 app.include_router(admin)
