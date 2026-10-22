@@ -64,14 +64,24 @@ export const getRanking = () => (MODO_DEMO ? viaMock(mock.ranking) : req<Ranking
 export const grupoMe = () => (MODO_DEMO ? viaMock(() => mock.grupoMe(getToken())) : req<GrupoMe>("/api/grupo/me", { auth: "grupo" }));
 export const grupoLog = (limite = 50) =>
   MODO_DEMO ? viaMock(() => mock.grupoLog(getToken(), limite)) : req<AtividadeDetalhe[]>(`/api/grupo/log${qs({ limite })}`, { auth: "grupo" });
-export async function baixarKit() {
-  const blob = MODO_DEMO ? await viaMock(() => mock.kit(getToken())) : await req<Blob>("/api/grupo/kit", { auth: "grupo", blob: true });
+function salvarArquivo(blob: Blob, nome: string) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = MODO_DEMO ? "kit-demo.txt" : "kit-fakegram.zip";
+  a.download = nome;
   a.click();
   URL.revokeObjectURL(url);
+}
+export async function baixarKit() {
+  const blob = MODO_DEMO ? await viaMock(() => mock.kit(getToken())) : await req<Blob>("/api/grupo/kit", { auth: "grupo", blob: true });
+  salvarArquivo(blob, MODO_DEMO ? "kit-demo.txt" : "kit-fakegram.zip");
+}
+
+// Kit de estudo: sem token, com os gabaritos, liberado pelo instrutor depois da aula
+export const getEstudo = () => (MODO_DEMO ? viaMock(mock.estudo) : req<{ liberado: boolean }>("/api/estudo"));
+export async function baixarKitEstudo() {
+  const blob = MODO_DEMO ? await viaMock(mock.kitEstudo) : await req<Blob>("/api/estudo/kit", { blob: true });
+  salvarArquivo(blob, MODO_DEMO ? "kit-de-estudo-demo.txt" : "kit-de-estudo-fakegram.zip");
 }
 
 // Admin
@@ -83,6 +93,8 @@ export const adminRevogar = (id: number) =>
   MODO_DEMO ? viaMock(() => mock.adminRevogar(k(), id)) : req(`/api/admin/grupos/${id}/revogar`, { method: "POST", auth: "admin" });
 export const adminPausar = (pausado: boolean) =>
   MODO_DEMO ? viaMock(() => mock.adminPausar(k(), pausado)) : req("/api/admin/pausar", { method: "POST", auth: "admin", body: { pausado } });
+export const adminEstudo = (liberado: boolean) =>
+  MODO_DEMO ? viaMock(() => mock.adminEstudo(k(), liberado)) : req("/api/admin/estudo", { method: "POST", auth: "admin", body: { liberado } });
 export const adminReset = () => (MODO_DEMO ? viaMock(() => mock.adminReset(k())) : req("/api/admin/reset", { method: "POST", auth: "admin" }));
 export const adminSimular = (quantidade: number) =>
   MODO_DEMO ? viaMock(() => mock.adminSimular(k(), quantidade)) : req("/api/admin/simular", { method: "POST", auth: "admin", body: { quantidade } });

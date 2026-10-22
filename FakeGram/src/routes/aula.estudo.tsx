@@ -1,9 +1,20 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { MonitorPlay, Printer } from "lucide-react";
+import { Download, MonitorPlay, Printer, TriangleAlert } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 import { ProvedorAula, Rico, SlideConteudo, faixaDeMinutos } from "@/components/aula/slide";
 import { BLOCOS, SLIDES, type Slide } from "@/content/aula";
+import { baixarKitEstudo, getEstudo } from "@/lib/api";
+
+type Busca = { instrutor?: true };
 
 export const Route = createFileRoute("/aula/estudo")({
+  // ?instrutor=1 mostra também as notas de palco: vira o roteiro completo para imprimir.
+  validateSearch: (busca: Record<string, unknown>): Busca =>
+    busca["instrutor"] === "1" || busca["instrutor"] === 1 || busca["instrutor"] === true
+      ? { instrutor: true }
+      : {},
   head: () => ({
     meta: [
       { title: "Material de estudo · Fakegram" },
@@ -44,7 +55,34 @@ function Indice() {
   );
 }
 
+function BotaoKitEstudo() {
+  const estudo = useQuery({ queryKey: ["estudo"], queryFn: getEstudo });
+  const [baixando, setBaixando] = useState(false);
+  const liberado = !!estudo.data?.liberado;
+  return (
+    <button
+      type="button"
+      disabled={!liberado || baixando}
+      title={liberado ? undefined : "O instrutor libera depois da aula"}
+      onClick={async () => {
+        setBaixando(true);
+        try {
+          await baixarKitEstudo();
+        } catch (erro) {
+          toast.error((erro as Error).message);
+        }
+        setBaixando(false);
+      }}
+      className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      <Download className="h-4 w-4" />
+      {liberado ? "Baixar kit de estudo" : "Kit de estudo: liberado depois da aula"}
+    </button>
+  );
+}
+
 function Estudo() {
+  const { instrutor = false } = Route.useSearch();
   return (
     <ProvedorAula
       value={{ modo: "documento", miniatura: false, revelado: null, fimCronometro: null }}
@@ -58,16 +96,23 @@ function Estudo() {
         <div className="min-w-0 max-w-3xl space-y-12">
           <header>
             <p className="font-mono text-sm text-primary">Oficina Langflow · 2h30</p>
-            <h1 className="mt-2 text-3xl font-bold md:text-4xl">Material de estudo da aula</h1>
+            <h1 className="mt-2 text-3xl font-bold md:text-4xl">
+              {instrutor ? "Roteiro do instrutor" : "Material de estudo da aula"}
+            </h1>
             <p className="mt-3 text-muted-foreground">
-              Todos os slides, com a explicação dada em aula e a teoria para revisar. Os exercícios
-              passo a passo estão em{" "}
+              Todos os slides, com a explicação dada em aula e a teoria para revisar.
+              {instrutor && " As notas de palco aparecem em amarelo."} Os exercícios passo a passo
+              estão em{" "}
               <Link
                 to="/exercicios/$n"
                 params={{ n: "1" }}
                 className="text-primary hover:underline"
               >
                 Exercícios
+              </Link>
+              , e o que fazer antes da aula está em{" "}
+              <Link to="/preparar" className="text-primary hover:underline">
+                Preparar
               </Link>
               .
             </p>
@@ -78,6 +123,7 @@ function Estudo() {
               >
                 <MonitorPlay className="h-4 w-4" /> Ver como apresentação
               </Link>
+              <BotaoKitEstudo />
               <button
                 type="button"
                 onClick={() => window.print()}
@@ -103,7 +149,7 @@ function Estudo() {
                 </span>
               </h2>
               {SLIDES.filter((s) => s.bloco === bloco.id).map((slide) => (
-                <SlideEstudo key={slide.id} slide={slide} />
+                <SlideEstudo key={slide.id} slide={slide} instrutor={instrutor} />
               ))}
             </section>
           ))}
@@ -113,7 +159,7 @@ function Estudo() {
   );
 }
 
-function SlideEstudo({ slide }: { slide: Slide }) {
+function SlideEstudo({ slide, instrutor }: { slide: Slide; instrutor: boolean }) {
   return (
     <article
       id={slide.id}
@@ -128,13 +174,21 @@ function SlideEstudo({ slide }: { slide: Slide }) {
       </div>
       <div className="mt-5 space-y-3 border-t pt-4 text-sm leading-relaxed">
         <p>
-          <span className="font-semibold">Explicação. </span>
+          <span className="font-semibold">{instrutor ? "Fala. " : "Explicação. "}</span>
           <span className="text-muted-foreground">{slide.fala}</span>
         </p>
         {slide.pergunte && (
           <p className="rounded-lg bg-primary/10 p-3">
-            <span className="font-semibold">Para pensar: </span>
+            <span className="font-semibold">{instrutor ? "Pergunte: " : "Para pensar: "}</span>
             {slide.pergunte}
+          </p>
+        )}
+        {instrutor && slide.acao && (
+          <p className="flex gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3">
+            <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+            <span>
+              <Rico texto={slide.acao} />
+            </span>
           </p>
         )}
         {slide.revisar && (

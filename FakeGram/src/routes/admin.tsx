@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { BotaoCopiar, Carregando, Erro, PageTitle, SkeletonLinhas, Vazio } from "@/components/fg";
 import { Switch } from "@/components/ui/switch";
-import { adminCriarGrupo, adminGrupos, adminPausar, adminReset, adminRevogar, adminSimular, getAdminKey, getPerfis, getStatus, MODO_DEMO, setAdminKey } from "@/lib/api";
+import { adminCriarGrupo, adminEstudo, adminGrupos, adminPausar, adminReset, adminRevogar, adminSimular, getAdminKey, getEstudo, getPerfis, getStatus, MODO_DEMO, setAdminKey } from "@/lib/api";
 import { mascarar } from "@/lib/util";
 import { cn } from "@/lib/utils";
 
@@ -62,6 +62,7 @@ function Painel({ sair }: { sair: () => void }) {
   const grupos = useQuery({ queryKey: ["admin-grupos"], queryFn: adminGrupos });
   const status = useQuery({ queryKey: ["status"], queryFn: getStatus });
   const perfis = useQuery({ queryKey: ["perfis"], queryFn: getPerfis });
+  const estudo = useQuery({ queryKey: ["estudo"], queryFn: getEstudo });
   const [visiveis, setVisiveis] = useState<Record<number, boolean>>({});
   const [nome, setNome] = useState("");
   const [perfilId, setPerfilId] = useState("");
@@ -72,7 +73,7 @@ function Painel({ sair }: { sair: () => void }) {
   const livres = perfis.data?.filter((p) => p.grupo_id == null) ?? [];
 
   const atualizar = async () => {
-    await Promise.all([grupos.refetch(), status.refetch(), perfis.refetch()]);
+    await Promise.all([grupos.refetch(), status.refetch(), perfis.refetch(), estudo.refetch()]);
     qc.invalidateQueries({ queryKey: ["ranking"] });
     qc.invalidateQueries({ queryKey: ["feed"] });
     qc.invalidateQueries({ queryKey: ["atividade"] });
@@ -106,6 +107,22 @@ function Painel({ sair }: { sair: () => void }) {
           aria-label="Pausar todos os agentes"
           onCheckedChange={(v) => run(() => adminPausar(v), v ? "Agentes pausados" : "Agentes retomados")}
           className="h-10 w-20 data-[state=checked]:bg-destructive [&>span]:h-8 [&>span]:w-8 [&>span]:data-[state=checked]:translate-x-10"
+        />
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border bg-card p-5 sm:p-6">
+        <div>
+          <p className="text-xl font-bold">{estudo.data?.liberado ? "Kit de estudo liberado" : "Kit de estudo fechado"}</p>
+          <p className="text-sm text-muted-foreground">
+            Sem token e com os gabaritos. Libere só depois da aula: ele aparece em /aula/estudo.
+          </p>
+        </div>
+        <Switch
+          checked={!!estudo.data?.liberado}
+          disabled={estudo.isPending}
+          aria-label="Liberar o kit de estudo"
+          onCheckedChange={(v) => run(() => adminEstudo(v), v ? "Kit de estudo liberado" : "Kit de estudo fechado")}
+          className="h-10 w-20 [&>span]:h-8 [&>span]:w-8 [&>span]:data-[state=checked]:translate-x-10"
         />
       </div>
 

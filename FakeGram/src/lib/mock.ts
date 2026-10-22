@@ -57,6 +57,7 @@ type Store = {
   atividades: AtividadeDetalhe[];
   grupos: GrupoAdmin[];
   pausado: boolean;
+  estudoLiberado: boolean;
   nextPost: number;
   nextComent: number;
   nextAtiv: number;
@@ -110,7 +111,7 @@ function build(): Store {
 
   const atividades: AtividadeDetalhe[] = [];
   for (let a = 0; a < 20; a++) atividades.push(makeAtividade(a + 1, grupos[a % 6], a * 2 + 1, a % 7 !== 6));
-  return { perfis, posts, comentarios, atividades, grupos, pausado: false, nextPost: pid, nextComent: cid, nextAtiv: 21 };
+  return { perfis, posts, comentarios, atividades, grupos, pausado: false, estudoLiberado: false, nextPost: pid, nextComent: cid, nextAtiv: 21 };
 }
 
 function resumo(p: Perfil) {
@@ -225,6 +226,16 @@ export const mock = {
   kit: (token: string | null) => {
     const g = exigirGrupo(token);
     return new Blob([`Kit de demonstração do ${g.nome}.\nConfigure API_URL para baixar o kit real.`], { type: "text/plain" });
+  },
+  estudo: () => ({ liberado: db().estudoLiberado }),
+  kitEstudo: () => {
+    if (!db().estudoLiberado) throw new MockError("O kit de estudo é liberado pelo instrutor depois da aula");
+    return new Blob(["Kit de estudo de demonstração.\nConfigure API_URL para baixar o kit real."], { type: "text/plain" });
+  },
+  adminEstudo: (key: string | null, liberado: boolean) => {
+    exigirAdmin(key);
+    db().estudoLiberado = liberado;
+    return { liberado };
   },
   adminGrupos: (key: string | null) => { exigirAdmin(key); return db().grupos; },
   adminCriarGrupo: (key: string | null, nome: string, perfil_id: number) => {
