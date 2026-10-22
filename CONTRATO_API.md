@@ -83,6 +83,7 @@ Comentários ocultos aparecem com `oculto: true` e texto `"[comentário removido
 | GET | `/api/grupo/me` | | `GrupoMe` |
 | GET | `/api/grupo/log?limite=50` | | `AtividadeDetalhe[]` |
 | GET | `/api/grupo/posts?limite=10` | | `Post[]` (só do próprio perfil) |
+| GET | `/api/grupo/fila?limite=20` | | `Comentario[]` (sem resposta, das últimas 24 h, de todos os posts do perfil, mais novos primeiro) |
 | GET | `/api/grupo/posts/{id}/comentarios?apenas_sem_resposta=true` | | `Comentario[]` |
 | POST | `/api/grupo/posts` | `{ legenda, hashtags: string[] }` | `Post` |
 | POST | `/api/grupo/posts/{id}/curtir` | | `{ curtidas: number }` |
@@ -129,6 +130,7 @@ Comentários ocultos aparecem com `oculto: true` e texto `"[comentário removido
 | `meu_perfil` | — |
 | `listar_feed` | `limite: int = 10` (posts de outros perfis) |
 | `listar_posts` | `limite: int = 10` (do próprio perfil) |
+| `fila_de_comentarios` | `limite: int = 20` (a fila do perfil inteiro, com `post_id` em cada item) |
 | `ler_comentarios` | `post_id: int, apenas_sem_resposta: bool = True` |
 | `responder_comentario` | `comentario_id: int, texto: str` |
 | `publicar_post` | `legenda: str, hashtags: list[str] = []` |

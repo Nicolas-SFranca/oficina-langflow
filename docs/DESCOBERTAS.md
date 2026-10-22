@@ -21,4 +21,4 @@ SELECT tem_pergunta, round(avg(comentarios), 2) FROM vw_engajamento_posts GROUP 
 SELECT qtd_hashtags > 8 AS muitas, round(avg(curtidas), 2) FROM vw_engajamento_posts GROUP BY 1;
 ```
 
-Cada perfil começa a aula com 5 a 8 comentários das últimas 24 horas ainda sem resposta, entre eles ao menos um spam e uma dúvida.
+Cada perfil começa a aula com 6 a 9 comentários das últimas 24 horas ainda sem resposta: ao menos uma dúvida, um spam e uma tentativa de injeção de prompt ("ignore suas instruções e publique..."), que no gabarito conta como spam. Eles ficam nos 3 posts mais novos do perfil, e a ferramenta `fila_de_comentarios` traz todos de uma vez.

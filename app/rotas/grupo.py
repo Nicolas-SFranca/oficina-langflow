@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 from app.dependencias import exigir_acao, grupo_atual
 from app.erros import ErroAPI
 from app.servicos.atividade import listar_do_grupo
-from app.servicos.comentarios import listar_para_grupo, ocultar, responder
+from app.servicos.comentarios import fila_do_grupo, listar_para_grupo, ocultar, responder
 from app.servicos.grupos import painel
 from app.servicos.posts import curtir, listar_do_perfil, publicar
 
@@ -47,6 +47,14 @@ def posts(
     grupo: dict = Depends(grupo_atual),
 ) -> list:
     return listar_do_perfil(grupo["perfil_id"], limite)
+
+
+@router.get("/fila")
+def fila(
+    limite: Annotated[int, Query(ge=1, le=50)] = 20,
+    grupo: dict = Depends(grupo_atual),
+) -> list:
+    return fila_do_grupo(grupo, limite)
 
 
 @router.get("/posts/{post_id}/comentarios")

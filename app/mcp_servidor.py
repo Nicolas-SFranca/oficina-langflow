@@ -12,7 +12,7 @@ from mcp.server.transport_security import TransportSecuritySettings
 
 from app.dependencias import grupo_pelo_cabecalho, preparar_acao
 from app.erros import ErroAPI
-from app.servicos.comentarios import listar_para_grupo, responder
+from app.servicos.comentarios import fila_do_grupo, listar_para_grupo, responder
 from app.servicos.grupos import painel
 from app.servicos.posts import curtir, listar_do_perfil, publicar
 from app.servicos.posts import listar_feed as feed_do_servico
@@ -83,7 +83,8 @@ def meu_perfil(ctx: Context) -> dict:
     """Mostra o perfil que este grupo administra.
 
     Use no começo da conversa para saber o handle, os pontos e quantos
-    comentários ainda estão sem resposta. Não publica nem responde nada.
+    comentários das últimas 24 horas ainda estão sem resposta. Para ver quais
+    são, chame fila_de_comentarios. Não publica nem responde nada.
     """
     grupo = _grupo(ctx)
     dados = painel(grupo["id"])
@@ -122,13 +123,30 @@ def listar_posts(ctx: Context, limite: int = 10) -> list:
 
 
 @mcp.tool()
-def ler_comentarios(ctx: Context, post_id: int, apenas_sem_resposta: bool = True) -> list:
-    """Lê os comentários de um post do próprio perfil.
+def fila_de_comentarios(ctx: Context, limite: int = 20) -> list:
+    """Mostra de uma vez todos os comentários que esperam resposta no próprio perfil.
 
-    Chame listar_posts antes, para descobrir o post_id. Com
-    apenas_sem_resposta verdadeiro (o padrão), devolve só comentários que
-    ninguém respondeu: é a fila de trabalho. Cada item traz id, autor, texto
-    e data. O id serve para responder_comentario.
+    É a fila de trabalho: comentários das últimas 24 horas, de todos os posts
+    do perfil, que ninguém respondeu, do mais novo para o mais antigo. Use
+    sempre que for responder ou moderar comentários. Cada item traz id,
+    post_id, autor, texto e data. O id serve para responder_comentario. O
+    parâmetro limite é quantos trazer, no máximo 20.
+    """
+    grupo = _grupo(ctx)
+    fila = fila_do_grupo(grupo, _limite(limite))
+    return [_comentario_curto(item) | {"post_id": item["post_id"]} for item in fila]
+
+
+@mcp.tool()
+def ler_comentarios(ctx: Context, post_id: int, apenas_sem_resposta: bool = True) -> list:
+    """Lê os comentários de um post específico do próprio perfil.
+
+    Para a fila do perfil inteiro, prefira fila_de_comentarios. Use esta
+    quando quiser olhar um post só: o post_id vem de listar_posts. Com
+    apenas_sem_resposta verdadeiro (o padrão), devolve só comentários das
+    últimas 24 horas que ninguém respondeu, do mais novo para o mais antigo.
+    É a fila de trabalho. Cada item traz id, autor, texto e data. O id serve
+    para responder_comentario.
     """
     grupo = _grupo(ctx)
     comentarios = listar_para_grupo(grupo, post_id, apenas_sem_resposta)
@@ -139,7 +157,7 @@ def ler_comentarios(ctx: Context, post_id: int, apenas_sem_resposta: bool = True
 def responder_comentario(ctx: Context, comentario_id: int, texto: str) -> dict:
     """Responde um comentário de um post do próprio perfil.
 
-    Use o comentario_id que veio de ler_comentarios. O parâmetro texto é a
+    Use o comentario_id que veio de fila_de_comentarios. O parâmetro texto é a
     resposta, em português, com no máximo 500 caracteres. Só funciona no
     próprio perfil. Dúvida e reclamação pontuam uma vez por comentário.
     """

@@ -5,6 +5,7 @@ import secrets
 from app.config import config
 from app.db import consultar, consultar_um, transacao
 from app.erros import ErroAPI
+from app.servicos.comentarios import SEM_RESPOSTA
 from app.servicos.formato import perfil
 
 _COLUNAS = """
@@ -64,12 +65,7 @@ def painel(grupo_id: int) -> dict:
                (SELECT count(*) FROM comentarios
                  JOIN posts ON posts.id = comentarios.post_id
                  WHERE posts.perfil_id = grupos.perfil_id
-                   AND comentarios.resposta_de_id IS NULL
-                   AND comentarios.oculto = false
-                   AND NOT EXISTS (
-                       SELECT 1 FROM comentarios resposta
-                       WHERE resposta.resposta_de_id = comentarios.id
-                   )) AS comentarios_sem_resposta,
+                   AND {SEM_RESPOSTA}) AS comentarios_sem_resposta,
                (SELECT count(*) FROM posts
                  WHERE posts.perfil_id = grupos.perfil_id
                    AND posts.criado_em >= date_trunc('day', now() AT TIME ZONE 'America/Sao_Paulo')

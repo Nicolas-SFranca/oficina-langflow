@@ -14,6 +14,17 @@ _SELECT = """
     FROM comentarios
 """
 
+# O que é "esperando resposta": comentário raiz, visível, das últimas 24 horas e sem
+# nenhuma resposta. A fila, a leitura por post e o painel do grupo usam esta mesma regra.
+SEM_RESPOSTA = """
+    comentarios.resposta_de_id IS NULL
+    AND comentarios.oculto = false
+    AND comentarios.criado_em > now() - interval '24 hours'
+    AND NOT EXISTS (
+        SELECT 1 FROM comentarios resposta WHERE resposta.resposta_de_id = comentarios.id
+    )
+"""
+
 
 def arvore(post_id: int) -> list[dict]:
     linhas = consultar(
@@ -58,6 +69,7 @@ def _garantir_post_do_grupo(cursor, post_id: int, grupo: dict) -> tuple[int, str
 
 
 def listar_para_grupo(grupo: dict, post_id: int, apenas_sem_resposta: bool) -> list[dict]:
+    """Com apenas_sem_resposta, a fila é a das últimas 24 horas, da mais nova para a mais antiga."""
     with transacao() as cursor:
         erro = _garantir_post_do_grupo(cursor, post_id, grupo)
     if erro:
@@ -67,15 +79,31 @@ def listar_para_grupo(grupo: dict, post_id: int, apenas_sem_resposta: bool) -> l
     linhas = consultar(
         f"""
         {_SELECT}
-        WHERE post_id = %s
-          AND resposta_de_id IS NULL
-          AND oculto = false
-          AND NOT EXISTS (
-              SELECT 1 FROM comentarios resposta WHERE resposta.resposta_de_id = comentarios.id
-          )
-        ORDER BY criado_em, id
+        WHERE post_id = %s AND {SEM_RESPOSTA}
+        ORDER BY criado_em DESC, id DESC
         """,
         (post_id,),
+    )
+    return [comentario(linha) for linha in linhas]
+
+
+def fila_do_grupo(grupo: dict, limite: int) -> list[dict]:
+    """A fila do perfil inteiro de uma vez, da mais nova para a mais antiga.
+
+    Sem ela, o agente precisa abrir post por post para achar o que falta responder.
+    """
+    linhas = consultar(
+        f"""
+        SELECT comentarios.id, comentarios.post_id, comentarios.autor, comentarios.texto,
+               comentarios.origem, comentarios.oculto, comentarios.resposta_de_id,
+               comentarios.criado_em
+        FROM comentarios
+        JOIN posts ON posts.id = comentarios.post_id
+        WHERE posts.perfil_id = %s AND {SEM_RESPOSTA}
+        ORDER BY comentarios.criado_em DESC, comentarios.id DESC
+        LIMIT %s
+        """,
+        (grupo["perfil_id"], limite),
     )
     return [comentario(linha) for linha in linhas]
 
