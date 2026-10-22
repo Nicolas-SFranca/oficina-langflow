@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 from app.dependencias import exigir_admin
 from app.servicos.comentarios import simular
-from app.servicos.config import definir_pausado
+from app.servicos.config import definir_estudo_liberado, definir_pausado
 from app.servicos.grupos import criar, listar_admin, revogar
 from app.servicos.seed import recriar_dados
 
@@ -23,6 +23,10 @@ class Pausar(BaseModel):
 
 class Simular(BaseModel):
     quantidade: int = Field(ge=1, le=100)
+
+
+class Estudo(BaseModel):
+    liberado: bool
 
 
 @router.get("/grupos")
@@ -43,6 +47,12 @@ def revogar_grupo(grupo_id: int) -> dict:
 @router.post("/pausar")
 def pausar(corpo: Pausar) -> dict:
     return {"pausado": definir_pausado(corpo.pausado)}
+
+
+@router.post("/estudo")
+def liberar_estudo(corpo: Estudo) -> dict:
+    """Libera ou recolhe o kit de estudo, com os gabaritos."""
+    return {"liberado": definir_estudo_liberado(corpo.liberado)}
 
 
 @router.post("/reset")

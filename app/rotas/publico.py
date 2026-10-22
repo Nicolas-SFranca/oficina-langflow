@@ -3,9 +3,13 @@
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Query
+from fastapi.responses import Response
 from pydantic import BaseModel
 
+from app.erros import ErroAPI
 from app.servicos.atividade import listar_publicas, ranking
+from app.servicos.config import estudo_liberado
+from app.servicos.kit import gerar_zip_de_estudo
 from app.servicos.perfis import listar as listar_perfis
 from app.servicos.perfis import obter as obter_perfil
 from app.servicos.posts import listar_feed, obter as obter_post
@@ -62,3 +66,22 @@ def atividade(limite: Annotated[int, Query(ge=1, le=100)] = 30) -> list:
 @router.get("/ranking")
 def placar() -> list:
     return ranking()
+
+
+@router.get("/estudo")
+def estudo() -> dict:
+    """Diz se o instrutor já liberou o kit de estudo."""
+    return {"liberado": estudo_liberado()}
+
+
+@router.get("/estudo/kit")
+def kit_de_estudo() -> Response:
+    """Kit sem token e com os gabaritos. Só sai depois que o instrutor libera."""
+    if not estudo_liberado():
+        raise ErroAPI(403, "O kit de estudo é liberado pelo instrutor depois da aula")
+    conteudo, nome = gerar_zip_de_estudo()
+    return Response(
+        content=conteudo,
+        media_type="application/zip",
+        headers={"Content-Disposition": f'attachment; filename="{nome}"'},
+    )

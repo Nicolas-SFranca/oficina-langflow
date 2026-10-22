@@ -73,6 +73,8 @@ type Status = {
 | GET | `/api/perfis/{handle}` | `Perfil & { posts: Post[] }` |
 | GET | `/api/atividade?limite=30` | `Atividade[]` |
 | GET | `/api/ranking` | `RankingItem[]` |
+| GET | `/api/estudo` | `{ liberado: boolean }` |
+| GET | `/api/estudo/kit` | arquivo `.zip` sem token e com os gabaritos; `403` até o instrutor liberar |
 
 Comentários ocultos aparecem com `oculto: true` e texto `"[comentário removido pela moderação]"`.
 
@@ -101,6 +103,7 @@ Comentários ocultos aparecem com `oculto: true` e texto `"[comentário removido
 | POST | `/api/admin/pausar` | `{ pausado: boolean }` | `{ pausado: boolean }` |
 | POST | `/api/admin/reset` | | `{ ok: true }` (recria os dados de exemplo) |
 | POST | `/api/admin/simular` | `{ quantidade: number }` | `{ comentarios: number, curtidas: number }` |
+| POST | `/api/admin/estudo` | `{ liberado: boolean }` | `{ liberado: boolean }` (libera o kit de estudo) |
 
 ## Regras de negócio
 

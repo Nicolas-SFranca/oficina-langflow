@@ -3,10 +3,11 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
+from fastapi.responses import Response
 from pydantic import BaseModel, Field
 
 from app.dependencias import exigir_acao, grupo_atual
-from app.erros import ErroAPI
+from app.servicos.kit import gerar_zip
 from app.servicos.atividade import listar_do_grupo
 from app.servicos.comentarios import fila_do_grupo, listar_para_grupo, ocultar, responder
 from app.servicos.grupos import painel
@@ -87,6 +88,11 @@ def ocultar_comentario(comentario_id: int, corpo: Ocultar, grupo: dict = Depends
 
 
 @router.get("/kit")
-def kit(_grupo: dict = Depends(grupo_atual)) -> None:
-    """O arquivo do exercício entra numa fase seguinte."""
-    raise ErroAPI(501, "O kit do grupo ainda não está disponível")
+def kit(grupo: dict = Depends(grupo_atual)) -> Response:
+    """Zip do exercício deste grupo. O token vai dentro do .env do arquivo."""
+    conteudo, nome = gerar_zip(grupo)
+    return Response(
+        content=conteudo,
+        media_type="application/zip",
+        headers={"Content-Disposition": f'attachment; filename="{nome}"'},
+    )
