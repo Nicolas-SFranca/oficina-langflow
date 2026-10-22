@@ -94,7 +94,8 @@ app.add_middleware(LimiteDeCorpo)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=config.origens_cors,
-    allow_origin_regex=r"https://.*\.lovable\.app",
+    # O FakeGram publicado na Vercel e, por compatibilidade, os sites do Lovable.
+    allow_origin_regex=r"https://(fakegram-oficina\.vercel\.app|.*\.lovable\.app)",
     allow_methods=["*"],
     allow_headers=["*"],
 )
