@@ -24,6 +24,9 @@ def abrir_pool() -> None:
             min_size=1,
             max_size=5,
             timeout=30,
+            # Na Vercel a função congela entre pedidos e o Neon derruba a conexão parada.
+            # O check troca a conexão morta antes de entregar, em vez de falhar a consulta.
+            check=ConnectionPool.check_connection,
             open=False,
             kwargs={"row_factory": dict_row, "connect_timeout": 30},
         )
