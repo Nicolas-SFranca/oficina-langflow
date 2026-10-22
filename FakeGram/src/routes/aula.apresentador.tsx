@@ -233,10 +233,11 @@ function RelogioAula({ slide, estado, agora, atualizar }: PropsRelogio) {
   );
 }
 
-/** Cronômetro das práticas. Aparece também no canto do projetor. */
+/** Cronômetro das práticas e do intervalo. Aparece também no canto do projetor. */
 function Cronometro({ slide, estado, agora, atualizar }: PropsRelogio) {
-  const pratica = slide.conteudo.find(
-    (b): b is Extract<Bloco, { tipo: "pratica" }> => b.tipo === "pratica",
+  const cronometrado = slide.conteudo.find(
+    (b): b is Extract<Bloco, { tipo: "pratica" | "intervalo" }> =>
+      b.tipo === "pratica" || b.tipo === "intervalo",
   );
   if (estado.fimCronometro !== null && agora !== null) {
     const restante = (estado.fimCronometro - agora) / 1000;
@@ -261,14 +262,15 @@ function Cronometro({ slide, estado, agora, atualizar }: PropsRelogio) {
       </div>
     );
   }
-  if (!pratica) return null;
+  if (!cronometrado) return null;
+  const nome = cronometrado.tipo === "pratica" ? "da prática" : "do intervalo";
   return (
     <button
       type="button"
       className={cn(botao, "justify-center border-primary/50 py-2.5 text-primary")}
-      onClick={() => atualizar({ fimCronometro: Date.now() + pratica.minutos * 60_000 })}
+      onClick={() => atualizar({ fimCronometro: Date.now() + cronometrado.minutos * 60_000 })}
     >
-      <Timer className="h-4 w-4" /> Iniciar cronômetro da prática ({pratica.minutos} min)
+      <Timer className="h-4 w-4" /> Iniciar cronômetro {nome} ({cronometrado.minutos} min)
     </button>
   );
 }

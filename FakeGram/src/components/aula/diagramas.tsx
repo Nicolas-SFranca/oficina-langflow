@@ -247,7 +247,12 @@ function NoFluxo({ no }: { no: No }) {
         strokeWidth={2}
         className={no.cor ? CAIXA[no.cor] : "fill-card stroke-muted-foreground/40"}
       />
-      <text x={no.x + 14} y={no.y + 25} fontSize={19} className="fill-foreground font-semibold">
+      <text
+        x={no.x + 14}
+        y={no.y + 25}
+        fontSize={Math.min(19, (no.w - 28) / (no.titulo.length * 0.55))}
+        className="fill-foreground font-semibold"
+      >
         {no.titulo}
       </text>
       <line
@@ -663,7 +668,7 @@ function AnatomiaComponente() {
             ancora="start"
             classe="fill-foreground font-display font-semibold"
           >
-            Agent
+            Agente
           </Texto>
           <rect x={530} y={56} width={52} height={26} rx={13} className="fill-primary" />
           <circle cx={569} cy={69} r={10} className="fill-primary-foreground" />
@@ -672,14 +677,14 @@ function AnatomiaComponente() {
           <line x1={330} y1={98} x2={670} y2={98} className="stroke-muted-foreground/25" />
 
           <Texto x={350} y={130} tamanho={14} ancora="start">
-            Language Model
+            Modelo de linguagem
           </Texto>
           <rect x={350} y={140} width={300} height={36} rx={7} className="fill-secondary" />
           <Texto x={364} y={164} tamanho={15} ancora="start" classe="fill-foreground font-mono">
             gemini-flash-latest
           </Texto>
           <Texto x={350} y={208} tamanho={14} ancora="start">
-            Agent Instructions
+            Instruções para o agente
           </Texto>
           <rect x={350} y={218} width={300} height={36} rx={7} className="fill-secondary" />
           <Texto x={364} y={242} tamanho={15} ancora="start" classe="fill-foreground font-mono">
@@ -688,15 +693,15 @@ function AnatomiaComponente() {
 
           <circle cx={330} cy={290} r={8} className="fill-agent" />
           <Texto x={350} y={296} tamanho={17} ancora="start" classe="fill-foreground">
-            Tools
+            Ferramentas
           </Texto>
           <circle cx={330} cy={330} r={8} className="fill-primary" />
           <Texto x={350} y={336} tamanho={17} ancora="start" classe="fill-foreground">
-            Input
+            Entrada
           </Texto>
           <circle cx={670} cy={360} r={8} className="fill-primary" />
           <Texto x={650} y={366} tamanho={17} ancora="end" classe="fill-foreground">
-            Response
+            Resposta
           </Texto>
 
           <g className="stroke-muted-foreground/60" strokeWidth={1.5} strokeDasharray="4 4">
@@ -728,7 +733,7 @@ function AnatomiaComponente() {
             Tool Mode
           </Texto>
           <Texto x={704} y={154} tamanho={15} ancora="start">
-            vira ferramenta (saída Toolset)
+            vira ferramenta do agente
           </Texto>
           <Texto x={704} y={356} tamanho={19} ancora="start" classe="fill-foreground font-semibold">
             Porta de saída
@@ -746,15 +751,15 @@ function FluxoSimples() {
   const chatInput: No = {
     x: 30,
     y: 40,
-    w: 200,
-    titulo: "Chat Input",
-    linhas: [{ rotulo: "Chat Message", porta: "saida" }],
+    w: 250,
+    titulo: "Campo de entrada de bate-papo",
+    linhas: [{ rotulo: "Mensagem de chat", porta: "saida" }],
   };
   const prompt: No = {
     x: 30,
     y: 190,
-    w: 200,
-    titulo: "Prompt Template",
+    w: 250,
+    titulo: "Modelo de prompt",
     linhas: [
       { rotulo: "tom: bem-humorado", campo: true },
       { rotulo: "Prompt", porta: "saida" },
@@ -764,25 +769,25 @@ function FluxoSimples() {
     x: 390,
     y: 80,
     w: 240,
-    titulo: "Language Model",
+    titulo: "Modelo de linguagem",
     linhas: [
-      { rotulo: "Input", porta: "entrada" },
-      { rotulo: "System Message", porta: "entrada" },
+      { rotulo: "Entrada", porta: "entrada" },
+      { rotulo: "Mensagem do sistema", porta: "entrada" },
       { rotulo: "gemini-flash-latest", campo: true },
-      { rotulo: "Model Response", porta: "saida" },
+      { rotulo: "Resposta modelo", porta: "saida" },
     ],
   };
   const chatOutput: No = {
     x: 770,
     y: 170,
     w: 200,
-    titulo: "Chat Output",
-    linhas: [{ rotulo: "Inputs", porta: "entrada" }],
+    titulo: "Saída do chat",
+    linhas: [{ rotulo: "Entradas", porta: "entrada" }],
   };
   return (
     <Svg
       altura={300}
-      titulo="Fluxo simples: Chat Input e Prompt Template ligados no Language Model, que responde no Chat Output"
+      titulo="Fluxo simples: entrada de bate-papo e modelo de prompt ligados no modelo de linguagem, que responde na saída do chat"
     >
       {() => (
         <>
@@ -815,45 +820,47 @@ function FluxoSimples() {
 }
 
 function FluxoAgente() {
-  const ferramentas = ["Calculator", "Current Date", "Web Search", "URL"].map((titulo, i): No => ({
-    x: 20,
-    y: 110 + i * 82,
-    w: 200,
-    titulo,
-    linhas: [{ rotulo: "Toolset", porta: "saida", cor: "agente" }],
-  }));
+  const ferramentas = ["Calculadora", "Data atual", "Procurar na web", "URL"].map(
+    (titulo, i): No => ({
+      x: 10,
+      y: 110 + i * 82,
+      w: 220,
+      titulo,
+      linhas: [{ rotulo: "Conjunto de ferramentas", porta: "saida", cor: "agente" }],
+    }),
+  );
   const chatInput: No = {
-    x: 290,
+    x: 270,
     y: 20,
-    w: 190,
-    titulo: "Chat Input",
-    linhas: [{ rotulo: "Chat Message", porta: "saida" }],
+    w: 240,
+    titulo: "Campo de entrada de bate-papo",
+    linhas: [{ rotulo: "Mensagem de chat", porta: "saida" }],
   };
   const agente: No = {
     x: 560,
     y: 120,
-    w: 220,
-    titulo: "Agent",
+    w: 240,
+    titulo: "Agente",
     cor: "agente",
     linhas: [
-      { rotulo: "Agent Instructions", campo: true },
-      { rotulo: "Tools", porta: "entrada", cor: "agente" },
-      { rotulo: "Input", porta: "entrada" },
+      { rotulo: "Instruções para o agente", campo: true },
+      { rotulo: "Ferramentas", porta: "entrada", cor: "agente" },
+      { rotulo: "Entrada", porta: "entrada" },
       { rotulo: "gemini-flash-latest", campo: true },
-      { rotulo: "Response", porta: "saida" },
+      { rotulo: "Resposta", porta: "saida" },
     ],
   };
   const chatOutput: No = {
-    x: 820,
+    x: 840,
     y: 250,
-    w: 160,
-    titulo: "Chat Output",
-    linhas: [{ rotulo: "Inputs", porta: "entrada" }],
+    w: 150,
+    titulo: "Saída do chat",
+    linhas: [{ rotulo: "Entradas", porta: "entrada" }],
   };
   return (
     <Svg
       altura={450}
-      titulo="Fluxo de agente: quatro ferramentas em Tool Mode ligadas na entrada Tools do Agent"
+      titulo="Fluxo de agente: quatro ferramentas em Tool Mode ligadas na entrada Ferramentas do Agente"
     >
       {() => (
         <>
@@ -897,45 +904,45 @@ function FluxoMcp() {
   const chatInput: No = {
     x: 20,
     y: 40,
-    w: 190,
-    titulo: "Chat Input",
-    linhas: [{ rotulo: "Chat Message", porta: "saida" }],
+    w: 250,
+    titulo: "Campo de entrada de bate-papo",
+    linhas: [{ rotulo: "Mensagem de chat", porta: "saida" }],
   };
   const mcp: No = {
     x: 20,
     y: 190,
     w: 220,
-    titulo: "MCP Tools",
+    titulo: "Ferramentas MCP",
     cor: "agente",
     linhas: [
       { rotulo: "servidor: fakegram", campo: true },
-      { rotulo: "Toolset", porta: "saida", cor: "agente" },
+      { rotulo: "Conjunto de ferramentas", porta: "saida", cor: "agente" },
     ],
   };
   const agente: No = {
     x: 360,
     y: 80,
     w: 220,
-    titulo: "Agent",
+    titulo: "Agente",
     linhas: [
       { rotulo: "instruções do kit", campo: true },
-      { rotulo: "Tools", porta: "entrada", cor: "agente" },
-      { rotulo: "Input", porta: "entrada" },
-      { rotulo: "Response", porta: "saida" },
+      { rotulo: "Ferramentas", porta: "entrada", cor: "agente" },
+      { rotulo: "Entrada", porta: "entrada" },
+      { rotulo: "Resposta", porta: "saida" },
     ],
   };
   const chatOutput: No = {
     x: 690,
     y: 150,
     w: 180,
-    titulo: "Chat Output",
-    linhas: [{ rotulo: "Inputs", porta: "entrada" }],
+    titulo: "Saída do chat",
+    linhas: [{ rotulo: "Entradas", porta: "entrada" }],
   };
   const fimMcp = mcp.y + alturaNo(mcp);
   return (
     <Svg
       altura={430}
-      titulo="O MCP Tools conecta o servidor do FakeGram ao Agent, com o token do grupo no header"
+      titulo="As Ferramentas MCP conectam o servidor do FakeGram ao Agente, com o token do grupo no header"
     >
       {(seta) => (
         <>

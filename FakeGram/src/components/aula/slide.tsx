@@ -1,4 +1,4 @@
-import { Check, Clock, LifeBuoy, MonitorPlay, Target, type LucideIcon } from "lucide-react";
+import { Check, Clock, Coffee, LifeBuoy, MonitorPlay, Target, type LucideIcon } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { Diagrama } from "@/components/aula/diagramas";
@@ -157,6 +157,27 @@ function LinhaPratica({
       <p className="text-[0.9em] leading-snug">
         <span className="font-semibold">{rotulo}: </span>
         <Rico texto={texto} />
+      </p>
+    </div>
+  );
+}
+
+function Intervalo({ bloco }: { bloco: Extract<Bloco, { tipo: "intervalo" }> }) {
+  const ambiente = useContext(AmbienteAula);
+  const agora = useAgora();
+  const restante =
+    ambiente.modo === "palco" && ambiente.fimCronometro !== null && agora !== null
+      ? (ambiente.fimCronometro - agora) / 1000
+      : null;
+  return (
+    <div className="flex flex-col items-center gap-[0.3em] text-center">
+      <Coffee className="h-[2em] w-[2em] text-primary" />
+      <p className="font-mono text-[3.2em] font-bold tabular-nums text-primary">
+        {restante === null
+          ? `${bloco.minutos} min`
+          : restante > 0
+            ? relogio(restante)
+            : "Voltando!"}
       </p>
     </div>
   );
@@ -405,6 +426,8 @@ function BlocoView({ bloco, duasColunas = false }: { bloco: Bloco; duasColunas?:
       return <Qr bloco={bloco} />;
     case "telao":
       return <Telao />;
+    case "intervalo":
+      return <Intervalo bloco={bloco} />;
   }
 }
 
