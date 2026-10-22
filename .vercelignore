@@ -1,0 +1,12 @@
+# O que não sobe no "vercel deploy". Só o backend vai para a Vercel;
+# o FakeGram é publicado pelo Lovable. Segredos locais nunca sobem.
+/.env
+/.env.local
+/.venv
+/.neon
+/.claude
+/.pytest_cache
+/FakeGram
+/tests
+__pycache__
+*.pyc
