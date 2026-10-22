@@ -74,16 +74,23 @@ def test_pausado_retorna_423(cliente, auth, admin):
     assert resposta.json()["erro"] == "Agentes pausados pelo instrutor"
 
 
-def test_limite_de_acoes_retorna_429(cliente, auth):
+def test_limite_de_acoes_retorna_429(cliente, auth, monkeypatch):
+    """O relógio do limite fica parado, então o resultado não depende de quanto o banco demora."""
+    from types import SimpleNamespace
+
     from app.config import config
+    from app.servicos import limites
+
+    monkeypatch.setattr(config, "limite_acoes_por_minuto", 3)
+    monkeypatch.setattr(limites, "time", SimpleNamespace(monotonic=lambda: 1000.0))
 
     post_id = _post("estudiopixel")
-    resposta = None
-    for _ in range(config.limite_acoes_por_minuto + 1):
-        resposta = cliente.post(f"/api/grupo/posts/{post_id}/curtir", headers=auth)
-    assert resposta is not None
-    assert resposta.status_code == 429
-    assert "erro" in resposta.json()
+    respostas = [
+        cliente.post(f"/api/grupo/posts/{post_id}/curtir", headers=auth) for _ in range(4)
+    ]
+    assert all(resposta.status_code != 429 for resposta in respostas[:3])
+    assert respostas[3].status_code == 429
+    assert respostas[3].json()["erro"] == "Limite de ações por minuto atingido"
 
 
 def test_ocultar_spam_soma_3(cliente, auth):
