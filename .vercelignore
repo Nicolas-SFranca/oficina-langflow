@@ -1,5 +1,5 @@
 # O que não sobe no "vercel deploy". Só o backend vai para a Vercel;
-# o FakeGram é publicado pelo Lovable. Segredos locais nunca sobem.
+# o FakeGram tem deploy próprio. Segredos locais e o roteiro do instrutor nunca sobem.
 /.env
 /.env.local
 /.venv
@@ -10,3 +10,4 @@
 /tests
 __pycache__
 *.pyc
+/instrutor

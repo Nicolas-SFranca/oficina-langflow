@@ -15,3 +15,6 @@ __pycache__/
 
 # O .env do kit só tem marcadores {{...}}, nenhum segredo.
 !kit_template/.env
+
+# Roteiro do instrutor em HTML, gerado por FakeGram/scripts/roteiro-instrutor.ts. Fica só na máquina.
+/instrutor/
