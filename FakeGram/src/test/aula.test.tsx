@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 import { NOMES_DIAGRAMAS } from "@/components/aula/diagramas";
 import { ProvedorAula, SlideConteudo } from "@/components/aula/slide";
 import { BLOCOS, SLIDES, limitarIndice } from "@/content/aula";
+import { NOTAS_DO_INSTRUTOR } from "@/content/aula.instrutor";
 import { relogio, tokenizar } from "@/lib/aula";
 import { routeTree } from "@/routeTree.gen";
 
@@ -54,6 +55,12 @@ describe("conteúdo da aula", () => {
         if (bloco.tipo === "quiz") expect(bloco.opcoes[bloco.correta], slide.id).toBeDefined();
       }
     }
+  });
+
+  it("liga cada nota do instrutor a um título de slide, sem título repetido", () => {
+    const titulos = SLIDES.map((s) => s.titulo);
+    expect(new Set(titulos).size).toBe(titulos.length);
+    for (const titulo of Object.keys(NOTAS_DO_INSTRUTOR)) expect(titulos).toContain(titulo);
   });
 });
 

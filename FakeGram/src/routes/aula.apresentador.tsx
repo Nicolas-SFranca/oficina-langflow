@@ -10,7 +10,6 @@ import {
   RotateCcw,
   Square,
   Timer,
-  TriangleAlert,
 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { Palco, ProvedorAula, Rico } from "@/components/aula/slide";
@@ -153,14 +152,6 @@ function Notas({ slide }: { slide: Slide }) {
           <p className="leading-relaxed">
             <span className="font-semibold">Pergunte: </span>
             {slide.pergunte}
-          </p>
-        </div>
-      )}
-      {slide.acao && (
-        <div className="flex gap-3 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3">
-          <TriangleAlert className="mt-0.5 h-5 w-5 shrink-0 text-amber-400" />
-          <p className="leading-relaxed">
-            <Rico texto={slide.acao} />
           </p>
         </div>
       )}
