@@ -36,5 +36,10 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": "off",
     },
   },
+  {
+    // Componentes do shadcn/ui exportam as variantes junto com o componente, por padrão.
+    files: ["src/components/ui/**/*.tsx"],
+    rules: { "react-refresh/only-export-components": "off" },
+  },
   eslintPluginPrettier,
 );

@@ -24,7 +24,12 @@ function NotFoundComponent() {
         <h1 className="font-mono text-7xl font-bold text-primary">404</h1>
         <h2 className="mt-4 text-xl font-semibold">Página não encontrada</h2>
         <p className="mt-2 text-sm text-muted-foreground">Esse endereço não existe no Fakegram.</p>
-        <Link to="/" className="mt-6 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">Voltar ao início</Link>
+        <Link
+          to="/"
+          className="mt-6 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+        >
+          Voltar ao início
+        </Link>
       </div>
     </div>
   );
@@ -42,7 +47,10 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
         <h1 className="text-xl font-semibold">Esta página não carregou</h1>
         <p className="mt-2 text-sm text-muted-foreground">Algo deu errado. Tente de novo.</p>
         <button
-          onClick={() => { router.invalidate(); reset(); }}
+          onClick={() => {
+            router.invalidate();
+            reset();
+          }}
           className="mt-6 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
         >
           Tentar de novo
@@ -65,7 +73,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap",
+      },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
@@ -90,12 +101,34 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-function NavItem({ item, className, onClick }: { item: (typeof NAV)[number]; className: string; onClick?: () => void }) {
+function NavItem({
+  item,
+  className,
+  onClick,
+}: {
+  item: (typeof NAV)[number];
+  className: string;
+  onClick?: () => void;
+}) {
   const active = { className: "bg-secondary text-foreground" };
   if ("params" in item) {
-    return <Link to={item.to} params={item.params} className={className} activeProps={active} onClick={onClick}>{item.label}</Link>;
+    return (
+      <Link
+        to={item.to}
+        params={item.params}
+        className={className}
+        activeProps={active}
+        onClick={onClick}
+      >
+        {item.label}
+      </Link>
+    );
   }
-  return <Link to={item.to} className={className} activeProps={active} onClick={onClick}>{item.label}</Link>;
+  return (
+    <Link to={item.to} className={className} activeProps={active} onClick={onClick}>
+      {item.label}
+    </Link>
+  );
 }
 
 const NAV = [
@@ -138,13 +171,32 @@ function Shell() {
               <span className="ml-1 font-mono text-[10px] text-muted-foreground">/lab</span>
             </Link>
             <nav className="ml-auto hidden gap-1 md:flex">
-              {NAV.map((n) => <NavItem key={n.label} item={n} className="rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground" />)}
+              {NAV.map((n) => (
+                <NavItem
+                  key={n.label}
+                  item={n}
+                  className="rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground"
+                />
+              ))}
             </nav>
-            <button className="ml-auto md:hidden" onClick={() => setAberto(!aberto)} aria-label="Menu"><Menu className="h-5 w-5" /></button>
+            <button
+              className="ml-auto md:hidden"
+              onClick={() => setAberto(!aberto)}
+              aria-label="Menu"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
           </div>
           {aberto && (
             <nav className="flex flex-col border-t px-4 py-2 md:hidden">
-              {NAV.map((n) => <NavItem key={n.label} item={n} className="py-2 text-sm" onClick={() => setAberto(false)} />)}
+              {NAV.map((n) => (
+                <NavItem
+                  key={n.label}
+                  item={n}
+                  className="py-2 text-sm"
+                  onClick={() => setAberto(false)}
+                />
+              ))}
             </nav>
           )}
         </header>
@@ -154,8 +206,13 @@ function Shell() {
       </main>
       <footer className="border-t py-6 text-xs text-muted-foreground print:hidden">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4">
-          <span>Fakegram · Oficina Langflow — rede fictícia para fins didáticos{MODO_DEMO && " · modo demonstração (dados falsos)"}</span>
-          <Link to="/admin" className="opacity-50 hover:opacity-100">instrutor</Link>
+          <span>
+            Fakegram · Oficina Langflow — rede fictícia para fins didáticos
+            {MODO_DEMO && " · modo demonstração (dados falsos)"}
+          </span>
+          <Link to="/admin" className="opacity-50 hover:opacity-100">
+            instrutor
+          </Link>
         </div>
       </footer>
     </div>

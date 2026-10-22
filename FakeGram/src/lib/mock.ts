@@ -1,18 +1,77 @@
-// @ts-nocheck -- dados falsos de demonstração
-import type { Atividade, AtividadeDetalhe, Comentario, GrupoAdmin, GrupoMe, Perfil, PerfilDetalhe, Post, PostDetalhe, RankingItem, Status } from "./types";
+import type {
+  Atividade,
+  AtividadeDetalhe,
+  Comentario,
+  GrupoAdmin,
+  GrupoMe,
+  Perfil,
+  PerfilDetalhe,
+  Post,
+  PostDetalhe,
+  RankingItem,
+  Status,
+} from "./types";
 
 // Dados falsos usados quando API_URL está vazio. Estado em memória (some ao recarregar).
 export const MOCK_ADMIN_KEY = "oficina";
 
 const MARCAS: Array<[string, string, string, string, string[]]> = [
-  ["graofino", "Grão Fino Café", "Cafeteria", "Café especial torrado na semana. ☕ Aberto de seg a sáb.", ["cafe", "baristas", "graofino"]],
-  ["atleticabyte", "Atlética Byte", "Atlética universitária", "A atlética mais rápida do campus. Bora, Byte!", ["atletica", "interbyte", "sistemas"]],
-  ["ossintaxe", "Os Sintaxe", "Banda", "Rock de garagem com letras sobre bugs e amores compilados.", ["rock", "showaovivo", "ossintaxe"]],
-  ["patasecia", "Patas & Cia", "Pet shop", "Banho, tosa e muito carinho para o seu pet. 🐾", ["pet", "banhoetosa", "adote"]],
-  ["smashdaesquina", "Smash da Esquina", "Hamburgueria", "Smash burger prensado na chapa. Delivery até 23h.", ["burger", "smash", "delivery"]],
-  ["capitulo7", "Capítulo 7", "Sebo", "Livros usados com histórias novas. Compramos e vendemos.", ["livros", "sebo", "leitura"]],
-  ["bikeurbana", "Bike Urbana", "Oficina de bicicletas", "Revisão, peças e rolês pela cidade. 🚲", ["bike", "pedal", "mobilidade"]],
-  ["estudiopixel", "Estúdio Pixel", "Estúdio de design", "Identidade visual, UI e muito pixel bem colocado.", ["design", "branding", "ui"]],
+  [
+    "graofino",
+    "Grão Fino Café",
+    "Cafeteria",
+    "Café especial torrado na semana. ☕ Aberto de seg a sáb.",
+    ["cafe", "baristas", "graofino"],
+  ],
+  [
+    "atleticabyte",
+    "Atlética Byte",
+    "Atlética universitária",
+    "A atlética mais rápida do campus. Bora, Byte!",
+    ["atletica", "interbyte", "sistemas"],
+  ],
+  [
+    "ossintaxe",
+    "Os Sintaxe",
+    "Banda",
+    "Rock de garagem com letras sobre bugs e amores compilados.",
+    ["rock", "showaovivo", "ossintaxe"],
+  ],
+  [
+    "patasecia",
+    "Patas & Cia",
+    "Pet shop",
+    "Banho, tosa e muito carinho para o seu pet. 🐾",
+    ["pet", "banhoetosa", "adote"],
+  ],
+  [
+    "smashdaesquina",
+    "Smash da Esquina",
+    "Hamburgueria",
+    "Smash burger prensado na chapa. Delivery até 23h.",
+    ["burger", "smash", "delivery"],
+  ],
+  [
+    "capitulo7",
+    "Capítulo 7",
+    "Sebo",
+    "Livros usados com histórias novas. Compramos e vendemos.",
+    ["livros", "sebo", "leitura"],
+  ],
+  [
+    "bikeurbana",
+    "Bike Urbana",
+    "Oficina de bicicletas",
+    "Revisão, peças e rolês pela cidade. 🚲",
+    ["bike", "pedal", "mobilidade"],
+  ],
+  [
+    "estudiopixel",
+    "Estúdio Pixel",
+    "Estúdio de design",
+    "Identidade visual, UI e muito pixel bem colocado.",
+    ["design", "branding", "ui"],
+  ],
 ];
 
 const LEGENDAS = [
@@ -48,7 +107,14 @@ const RESPOSTAS_AGENTE = [
   "Aceitamos sim! Pix, cartão e dinheiro.",
 ];
 
-const FERRAMENTAS = ["responder_comentario", "publicar_post", "moderar_comentario", "listar_comentarios", "curtir_post", "consultar_metricas"];
+const FERRAMENTAS = [
+  "responder_comentario",
+  "publicar_post",
+  "moderar_comentario",
+  "listar_comentarios",
+  "curtir_post",
+  "consultar_metricas",
+];
 
 type Store = {
   perfis: Perfil[];
@@ -64,11 +130,22 @@ type Store = {
 };
 
 let store: Store | null = null;
+
+/** Item da lista com índice circular. As listas destes dados nunca são vazias. */
+function item<T>(lista: readonly T[], i: number): T {
+  const valor = lista[((i % lista.length) + lista.length) % lista.length];
+  if (valor === undefined) throw new Error("Lista vazia nos dados de demonstração");
+  return valor;
+}
 const ago = (min: number) => new Date(Date.now() - min * 60_000).toISOString();
 
 function build(): Store {
   const perfis: Perfil[] = MARCAS.map(([handle, nome, categoria, bio], i) => ({
-    id: i + 1, handle, nome, categoria, bio,
+    id: i + 1,
+    handle,
+    nome,
+    categoria,
+    bio,
     avatar_url: `https://picsum.photos/seed/${handle}/200/200`,
     grupo_id: i < 6 ? i + 1 : null,
     seguidores: 800 + ((i * 1373) % 4200),
@@ -76,26 +153,49 @@ function build(): Store {
   }));
   const posts: Post[] = [];
   const comentarios: Comentario[] = [];
-  let pid = 1, cid = 1;
+  let pid = 1,
+    cid = 1;
   for (let n = 10; n >= 1; n--) {
     perfis.forEach((p, i) => {
       const k = (n + i) % LEGENDAS.length;
       const minutos = (n - 1) * 47 + i * 5 + 3;
       const post: Post = {
-        id: pid++, perfil: resumo(p), legenda: LEGENDAS[k],
+        id: pid++,
+        perfil: resumo(p),
+        legenda: item(LEGENDAS, k),
         imagem_url: `https://picsum.photos/seed/${p.handle}-${n}/800/800`,
-        hashtags: MARCAS[i][4].slice(0, 1 + (n % 3)),
-        curtidas: 12 + ((n * 37 + i * 11) % 240), total_comentarios: 0,
-        origem: n % 4 === 0 ? "agente" : "seed", criado_em: ago(minutos),
+        hashtags: item(MARCAS, i)[4].slice(0, 1 + (n % 3)),
+        curtidas: 12 + ((n * 37 + i * 11) % 240),
+        total_comentarios: 0,
+        origem: n % 4 === 0 ? "agente" : "seed",
+        criado_em: ago(minutos),
       };
       const qtd = (n + i) % 5;
       for (let c = 0; c < qtd; c++) {
-        const [autor, texto] = COMENTARIOS[(n * 3 + i + c * 7) % COMENTARIOS.length];
+        const [autor, texto] = item(COMENTARIOS, n * 3 + i + c * 7);
         const spam = texto.includes("bit.ly");
-        const com: Comentario = { id: cid++, post_id: post.id, autor, texto, origem: "seed", oculto: spam && (n + c) % 2 === 0, resposta_de_id: null, criado_em: ago(minutos - c - 1) };
+        const com: Comentario = {
+          id: cid++,
+          post_id: post.id,
+          autor,
+          texto,
+          origem: "seed",
+          oculto: spam && (n + c) % 2 === 0,
+          resposta_de_id: null,
+          criado_em: ago(minutos - c - 1),
+        };
         comentarios.push(com);
         if (!spam && (n + c + i) % 3 === 0) {
-          comentarios.push({ id: cid++, post_id: post.id, autor: p.handle, texto: RESPOSTAS_AGENTE[(n + c) % RESPOSTAS_AGENTE.length], origem: "agente", oculto: false, resposta_de_id: com.id, criado_em: ago(Math.max(minutos - c - 2, 0)) });
+          comentarios.push({
+            id: cid++,
+            post_id: post.id,
+            autor: p.handle,
+            texto: item(RESPOSTAS_AGENTE, n + c),
+            origem: "agente",
+            oculto: false,
+            resposta_de_id: com.id,
+            criado_em: ago(Math.max(minutos - c - 2, 0)),
+          });
         }
       }
       post.total_comentarios = comentarios.filter((x) => x.post_id === post.id).length;
@@ -105,21 +205,42 @@ function build(): Store {
   posts.sort((a, b) => b.criado_em.localeCompare(a.criado_em));
 
   const grupos: GrupoAdmin[] = perfis.slice(0, 6).map((p, i) => ({
-    id: i + 1, nome: `Grupo ${i + 1}`, perfil: p, pontos: [42, 37, 51, 28, 33, 19][i], ativo: true,
+    id: i + 1,
+    nome: `Grupo ${i + 1}`,
+    perfil: p,
+    pontos: item([42, 37, 51, 28, 33, 19], i),
+    ativo: true,
     token: `fg_demo_grupo${i + 1}_${(7919 * (i + 3)).toString(16)}`,
   }));
 
   const atividades: AtividadeDetalhe[] = [];
-  for (let a = 0; a < 20; a++) atividades.push(makeAtividade(a + 1, grupos[a % 6], a * 2 + 1, a % 7 !== 6));
-  return { perfis, posts, comentarios, atividades, grupos, pausado: false, estudoLiberado: false, nextPost: pid, nextComent: cid, nextAtiv: 21 };
+  for (let a = 0; a < 20; a++)
+    atividades.push(makeAtividade(a + 1, item(grupos, a), a * 2 + 1, a % 7 !== 6));
+  return {
+    perfis,
+    posts,
+    comentarios,
+    atividades,
+    grupos,
+    pausado: false,
+    estudoLiberado: false,
+    nextPost: pid,
+    nextComent: cid,
+    nextAtiv: 21,
+  };
 }
 
 function resumo(p: Perfil) {
   return { id: p.id, handle: p.handle, nome: p.nome, avatar_url: p.avatar_url };
 }
 
-function makeAtividade(id: number, g: GrupoAdmin, minutos: number, sucesso: boolean): AtividadeDetalhe {
-  const ferramenta = FERRAMENTAS[id % FERRAMENTAS.length];
+function makeAtividade(
+  id: number,
+  g: GrupoAdmin,
+  minutos: number,
+  sucesso: boolean,
+): AtividadeDetalhe {
+  const ferramenta = item(FERRAMENTAS, id);
   const h = g.perfil.handle;
   const verbo: Record<string, string> = {
     responder_comentario: `respondeu um comentário em @${h}`,
@@ -130,10 +251,23 @@ function makeAtividade(id: number, g: GrupoAdmin, minutos: number, sucesso: bool
     consultar_metricas: `consultou métricas de @${h}`,
   };
   return {
-    id, grupo: g.nome, perfil_handle: h, ferramenta, sucesso, criado_em: ago(minutos),
-    resumo: sucesso ? `${g.nome} ${verbo[ferramenta]}` : `${g.nome} tentou ${ferramenta} em @${h} (erro)`,
-    parametros: { perfil: h, post_id: 10 + id, ...(ferramenta === "responder_comentario" ? { texto: RESPOSTAS_AGENTE[id % 4] } : {}) },
-    resultado: JSON.stringify(sucesso ? { ok: true, id: 1000 + id } : { erro: "comentário não encontrado" }),
+    id,
+    grupo: g.nome,
+    perfil_handle: h,
+    ferramenta,
+    sucesso,
+    criado_em: ago(minutos),
+    resumo: sucesso
+      ? `${g.nome} ${verbo[ferramenta]}`
+      : `${g.nome} tentou ${ferramenta} em @${h} (erro)`,
+    parametros: {
+      perfil: h,
+      post_id: 10 + id,
+      ...(ferramenta === "responder_comentario" ? { texto: item(RESPOSTAS_AGENTE, id) } : {}),
+    },
+    resultado: JSON.stringify(
+      sucesso ? { ok: true, id: 1000 + id } : { erro: "comentário não encontrado" },
+    ),
   };
 }
 
@@ -147,19 +281,25 @@ function tick() {
   const s = db();
   if (s.pausado) return;
   if (Math.random() < 0.35) {
-    const g = s.grupos[Math.floor(Math.random() * s.grupos.length)];
+    const g = item(s.grupos, Math.floor(Math.random() * s.grupos.length));
     const p = g.perfil;
     const n = s.nextPost++;
     const idx = s.perfis.findIndex((x) => x.id === p.id);
     s.posts.unshift({
-      id: n, perfil: resumo(p), legenda: LEGENDAS[n % LEGENDAS.length] + " (post do agente)",
-      imagem_url: `https://picsum.photos/seed/${p.handle}-novo${n}/800/800`, hashtags: MARCAS[idx][4].slice(0, 2),
-      curtidas: 0, total_comentarios: 0, origem: "agente", criado_em: new Date().toISOString(),
+      id: n,
+      perfil: resumo(p),
+      legenda: LEGENDAS[n % LEGENDAS.length] + " (post do agente)",
+      imagem_url: `https://picsum.photos/seed/${p.handle}-novo${n}/800/800`,
+      hashtags: item(MARCAS, idx)[4].slice(0, 2),
+      curtidas: 0,
+      total_comentarios: 0,
+      origem: "agente",
+      criado_em: new Date().toISOString(),
     });
     p.total_posts++;
   }
   if (Math.random() < 0.6) {
-    const g = s.grupos[Math.floor(Math.random() * s.grupos.length)];
+    const g = item(s.grupos, Math.floor(Math.random() * s.grupos.length));
     s.atividades.unshift(makeAtividade(s.nextAtiv++, g, 0, Math.random() > 0.15));
     g.pontos += 1;
   }
@@ -169,7 +309,11 @@ const tree = (list: Comentario[]): Comentario[] => {
   const by = new Map<number, Comentario>();
   list.forEach((c) => by.set(c.id, { ...c, respostas: [] }));
   const roots: Comentario[] = [];
-  by.forEach((c) => (c.resposta_de_id && by.get(c.resposta_de_id) ? by.get(c.resposta_de_id)!.respostas!.push(c) : roots.push(c)));
+  by.forEach((c) =>
+    c.resposta_de_id && by.get(c.resposta_de_id)
+      ? by.get(c.resposta_de_id)!.respostas!.push(c)
+      : roots.push(c),
+  );
   return roots;
 };
 
@@ -185,7 +329,13 @@ function exigirAdmin(key: string | null) {
 }
 
 export const mock = {
-  status: (): Status => ({ api: "ok", banco: "ok", mcp: "ok", agentes_pausados: db().pausado, versao: "demo-1.0" }),
+  status: (): Status => ({
+    api: "ok",
+    banco: "ok",
+    mcp: "ok",
+    agentes_pausados: db().pausado,
+    versao: "demo-1.0",
+  }),
   feed: (q: { limite?: number; antes_de?: number; perfil?: string }): Post[] => {
     tick();
     let list = db().posts;
@@ -206,38 +356,67 @@ export const mock = {
   },
   atividade: (limite: number): Atividade[] => {
     tick();
-    return db().atividades.slice(0, limite).map(({ parametros: _p, resultado: _r, ...a }) => a);
+    return db()
+      .atividades.slice(0, limite)
+      .map(({ parametros: _p, resultado: _r, ...a }) => a);
   },
   ranking: (): RankingItem[] =>
-    [...db().grupos].filter((g) => g.ativo).sort((a, b) => b.pontos - a.pontos).map((g, i) => ({
-      posicao: i + 1, grupo: g.nome, perfil_handle: g.perfil.handle, pontos: g.pontos,
-      respostas: Math.floor(g.pontos / 3), moderacoes_corretas: Math.floor(g.pontos / 7), posts: 2 + (g.pontos % 5),
-    })),
+    [...db().grupos]
+      .filter((g) => g.ativo)
+      .sort((a, b) => b.pontos - a.pontos)
+      .map((g, i) => ({
+        posicao: i + 1,
+        grupo: g.nome,
+        perfil_handle: g.perfil.handle,
+        pontos: g.pontos,
+        respostas: Math.floor(g.pontos / 3),
+        moderacoes_corretas: Math.floor(g.pontos / 7),
+        posts: 2 + (g.pontos % 5),
+      })),
   grupoMe: (token: string | null): GrupoMe => {
     const g = exigirGrupo(token);
     const { token: _t, ...rest } = g;
-    return { ...rest, mcp_url: "https://fakegram-demo.exemplo.com/mcp", metricas: { curtidas_recebidas: 312 + g.pontos, comentarios_sem_resposta: 3 + (g.id % 4), posts_hoje: 1 + (g.id % 3) } };
+    return {
+      ...rest,
+      mcp_url: "https://fakegram-demo.exemplo.com/mcp",
+      metricas: {
+        curtidas_recebidas: 312 + g.pontos,
+        comentarios_sem_resposta: 3 + (g.id % 4),
+        posts_hoje: 1 + (g.id % 3),
+      },
+    };
   },
   grupoLog: (token: string | null, limite: number) => {
     const g = exigirGrupo(token);
     tick();
-    return db().atividades.filter((a) => a.grupo === g.nome).slice(0, limite);
+    return db()
+      .atividades.filter((a) => a.grupo === g.nome)
+      .slice(0, limite);
   },
   kit: (token: string | null) => {
     const g = exigirGrupo(token);
-    return new Blob([`Kit de demonstração do ${g.nome}.\nConfigure API_URL para baixar o kit real.`], { type: "text/plain" });
+    return new Blob(
+      [`Kit de demonstração do ${g.nome}.\nConfigure API_URL para baixar o kit real.`],
+      { type: "text/plain" },
+    );
   },
   estudo: () => ({ liberado: db().estudoLiberado }),
   kitEstudo: () => {
-    if (!db().estudoLiberado) throw new MockError("O kit de estudo é liberado pelo instrutor depois da aula");
-    return new Blob(["Kit de estudo de demonstração.\nConfigure API_URL para baixar o kit real."], { type: "text/plain" });
+    if (!db().estudoLiberado)
+      throw new MockError("O kit de estudo é liberado pelo instrutor depois da aula");
+    return new Blob(["Kit de estudo de demonstração.\nConfigure API_URL para baixar o kit real."], {
+      type: "text/plain",
+    });
   },
   adminEstudo: (key: string | null, liberado: boolean) => {
     exigirAdmin(key);
     db().estudoLiberado = liberado;
     return { liberado };
   },
-  adminGrupos: (key: string | null) => { exigirAdmin(key); return db().grupos; },
+  adminGrupos: (key: string | null) => {
+    exigirAdmin(key);
+    return db().grupos;
+  },
   adminCriarGrupo: (key: string | null, nome: string, perfil_id: number) => {
     exigirAdmin(key);
     const s = db();
@@ -245,7 +424,14 @@ export const mock = {
     if (!p || p.grupo_id) throw new MockError("Perfil indisponível");
     const id = s.grupos.length + 1;
     p.grupo_id = id;
-    const g = { id, nome, perfil: p, pontos: 0, ativo: true, token: `fg_demo_grupo${id}_${(7919 * (id + 3)).toString(16)}` };
+    const g = {
+      id,
+      nome,
+      perfil: p,
+      pontos: 0,
+      ativo: true,
+      token: `fg_demo_grupo${id}_${(7919 * (id + 3)).toString(16)}`,
+    };
     s.grupos.push(g);
     return g;
   },
@@ -255,13 +441,21 @@ export const mock = {
     if (g) g.ativo = false;
     return { ok: true };
   },
-  adminPausar: (key: string | null, pausado: boolean) => { exigirAdmin(key); db().pausado = pausado; return { ok: true }; },
-  adminReset: (key: string | null) => { exigirAdmin(key); store = build(); return { ok: true }; },
+  adminPausar: (key: string | null, pausado: boolean) => {
+    exigirAdmin(key);
+    db().pausado = pausado;
+    return { ok: true };
+  },
+  adminReset: (key: string | null) => {
+    exigirAdmin(key);
+    store = build();
+    return { ok: true };
+  },
   adminSimular: (key: string | null, quantidade: number) => {
     exigirAdmin(key);
     const s = db();
     for (let i = 0; i < quantidade; i++) {
-      const g = s.grupos[i % s.grupos.length];
+      const g = item(s.grupos, i);
       s.atividades.unshift(makeAtividade(s.nextAtiv++, g, 0, true));
       g.pontos++;
     }

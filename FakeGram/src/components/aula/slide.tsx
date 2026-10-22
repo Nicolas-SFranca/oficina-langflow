@@ -621,8 +621,3 @@ export function Palco({
     </div>
   );
 }
-
-/** "min 10–12", ou "antes da aula" para o que acontece na chegada. */
-export function faixaDeMinutos([inicio, fim]: [number, number]) {
-  return inicio < 0 ? "antes da aula" : `min ${inicio}–${fim}`;
-}

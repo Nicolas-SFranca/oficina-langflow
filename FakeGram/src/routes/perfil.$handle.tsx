@@ -29,7 +29,9 @@ function PerfilPage() {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-1 sm:gap-3">
-          {Array.from({ length: 6 }, (_, i) => <div key={i} className="aspect-square animate-pulse rounded-md bg-muted" />)}
+          {Array.from({ length: 6 }, (_, i) => (
+            <div key={i} className="aspect-square animate-pulse rounded-md bg-muted" />
+          ))}
         </div>
       </div>
     );
@@ -43,21 +45,43 @@ function PerfilPage() {
         <div className="flex-1 text-center sm:text-left">
           <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
             <h1 className="text-2xl font-bold">@{p.handle}</h1>
-            {p.grupo_id && <span className="rounded-full border border-agent bg-agent/15 px-3 py-0.5 text-xs">Gerenciado pelo Grupo {p.grupo_id}</span>}
+            {p.grupo_id && (
+              <span className="rounded-full border border-agent bg-agent/15 px-3 py-0.5 text-xs">
+                Gerenciado pelo Grupo {p.grupo_id}
+              </span>
+            )}
           </div>
-          <p className="mt-1 font-medium">{p.nome} <span className="text-sm text-muted-foreground">· {p.categoria}</span></p>
+          <p className="mt-1 font-medium">
+            {p.nome} <span className="text-sm text-muted-foreground">· {p.categoria}</span>
+          </p>
           <p className="mt-2 text-sm text-muted-foreground">{p.bio}</p>
           <div className="mt-4 flex justify-center gap-6 font-mono text-sm sm:justify-start">
-            <span><b className="text-primary">{p.total_posts}</b> posts</span>
-            <span><b className="text-primary">{p.seguidores.toLocaleString("pt-BR")}</b> seguidores</span>
+            <span>
+              <b className="text-primary">{p.total_posts}</b> posts
+            </span>
+            <span>
+              <b className="text-primary">{p.seguidores.toLocaleString("pt-BR")}</b> seguidores
+            </span>
           </div>
         </div>
       </header>
-      {p.posts.length === 0 ? <Vazio texto="Este perfil ainda não publicou" /> : (
+      {p.posts.length === 0 ? (
+        <Vazio texto="Este perfil ainda não publicou" />
+      ) : (
         <div className="grid grid-cols-3 gap-1 sm:gap-3">
           {p.posts.map((post) => (
-            <Link key={post.id} to="/post/$id" params={{ id: String(post.id) }} className="group relative overflow-hidden rounded-md">
-              <img src={post.imagem_url} alt={post.legenda} className="aspect-square w-full object-cover transition group-hover:scale-105" loading="lazy" />
+            <Link
+              key={post.id}
+              to="/post/$id"
+              params={{ id: String(post.id) }}
+              className="group relative overflow-hidden rounded-md"
+            >
+              <img
+                src={post.imagem_url}
+                alt={post.legenda}
+                className="aspect-square w-full object-cover transition group-hover:scale-105"
+                loading="lazy"
+              />
               {post.origem === "agente" && <AgentBadge className="absolute right-1 top-1" />}
             </Link>
           ))}

@@ -5,7 +5,21 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { BotaoCopiar, Carregando, Erro, PageTitle, SkeletonLinhas, Vazio } from "@/components/fg";
 import { Switch } from "@/components/ui/switch";
-import { adminCriarGrupo, adminEstudo, adminGrupos, adminPausar, adminReset, adminRevogar, adminSimular, getAdminKey, getEstudo, getPerfis, getStatus, MODO_DEMO, setAdminKey } from "@/lib/api";
+import {
+  adminCriarGrupo,
+  adminEstudo,
+  adminGrupos,
+  adminPausar,
+  adminReset,
+  adminRevogar,
+  adminSimular,
+  getAdminKey,
+  getEstudo,
+  getPerfis,
+  getStatus,
+  MODO_DEMO,
+  setAdminKey,
+} from "@/lib/api";
 import { mascarar } from "@/lib/util";
 import { cn } from "@/lib/utils";
 
@@ -45,16 +59,37 @@ function Admin() {
           setLoad(false);
         }}
       >
-        <PageTitle titulo="Instrutor" sub={MODO_DEMO ? "Demonstração: chave oficina" : "Digite a chave de admin."} />
+        <PageTitle
+          titulo="Instrutor"
+          sub={MODO_DEMO ? "Demonstração: chave oficina" : "Digite a chave de admin."}
+        />
         <label className="block space-y-1">
           <span className="text-sm text-muted-foreground">Chave de admin</span>
-          <input type="password" value={v} onChange={(e) => setV(e.target.value)} autoComplete="off" className="w-full rounded-md border bg-background px-3 py-2 font-mono" />
+          <input
+            type="password"
+            value={v}
+            onChange={(e) => setV(e.target.value)}
+            autoComplete="off"
+            className="w-full rounded-md border bg-background px-3 py-2 font-mono"
+          />
         </label>
-        <button disabled={load || !v.trim()} className="w-full rounded-md bg-primary py-2 font-medium text-primary-foreground disabled:opacity-60">{load ? "Validando…" : "Entrar"}</button>
+        <button
+          disabled={load || !v.trim()}
+          className="w-full rounded-md bg-primary py-2 font-medium text-primary-foreground disabled:opacity-60"
+        >
+          {load ? "Validando…" : "Entrar"}
+        </button>
       </form>
     );
   }
-  return <Painel sair={() => { setAdminKey(null); setK(null); }} />;
+  return (
+    <Painel
+      sair={() => {
+        setAdminKey(null);
+        setK(null);
+      }}
+    />
+  );
 }
 
 function Painel({ sair }: { sair: () => void }) {
@@ -93,10 +128,17 @@ function Painel({ sair }: { sair: () => void }) {
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <PageTitle titulo="Instrutor" sub="Controle da oficina." />
-        <button type="button" onClick={sair} className="mb-6 rounded-md border px-3 py-1.5 text-sm">Sair</button>
+        <button type="button" onClick={sair} className="mb-6 rounded-md border px-3 py-1.5 text-sm">
+          Sair
+        </button>
       </div>
 
-      <div className={cn("flex flex-wrap items-center justify-between gap-4 rounded-2xl border p-5 sm:p-6", pausado ? "border-destructive bg-destructive/15" : "bg-card")}>
+      <div
+        className={cn(
+          "flex flex-wrap items-center justify-between gap-4 rounded-2xl border p-5 sm:p-6",
+          pausado ? "border-destructive bg-destructive/15" : "bg-card",
+        )}
+      >
         <div>
           <p className="text-xl font-bold">{pausado ? "Agentes pausados" : "Agentes ativos"}</p>
           <p className="text-sm text-muted-foreground">Pausar todos os agentes</p>
@@ -105,14 +147,18 @@ function Painel({ sair }: { sair: () => void }) {
           checked={pausado}
           disabled={status.isPending}
           aria-label="Pausar todos os agentes"
-          onCheckedChange={(v) => run(() => adminPausar(v), v ? "Agentes pausados" : "Agentes retomados")}
+          onCheckedChange={(v) =>
+            run(() => adminPausar(v), v ? "Agentes pausados" : "Agentes retomados")
+          }
           className="h-10 w-20 data-[state=checked]:bg-destructive [&>span]:h-8 [&>span]:w-8 [&>span]:data-[state=checked]:translate-x-10"
         />
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border bg-card p-5 sm:p-6">
         <div>
-          <p className="text-xl font-bold">{estudo.data?.liberado ? "Kit de estudo liberado" : "Kit de estudo fechado"}</p>
+          <p className="text-xl font-bold">
+            {estudo.data?.liberado ? "Kit de estudo liberado" : "Kit de estudo fechado"}
+          </p>
           <p className="text-sm text-muted-foreground">
             Sem token e com os gabaritos. Libere só depois da aula: ele aparece em /aula/estudo.
           </p>
@@ -121,18 +167,32 @@ function Painel({ sair }: { sair: () => void }) {
           checked={!!estudo.data?.liberado}
           disabled={estudo.isPending}
           aria-label="Liberar o kit de estudo"
-          onCheckedChange={(v) => run(() => adminEstudo(v), v ? "Kit de estudo liberado" : "Kit de estudo fechado")}
+          onCheckedChange={(v) =>
+            run(() => adminEstudo(v), v ? "Kit de estudo liberado" : "Kit de estudo fechado")
+          }
           className="h-10 w-20 [&>span]:h-8 [&>span]:w-8 [&>span]:data-[state=checked]:translate-x-10"
         />
       </div>
 
       <section className="space-y-3">
         <h2 className="text-xl font-semibold">Grupos</h2>
-        {grupos.isPending ? <SkeletonLinhas n={6} /> : grupos.isError ? <Erro erro={grupos.error} onRetry={() => grupos.refetch()} /> : !grupos.data?.length ? <Vazio texto="Nenhum grupo cadastrado" /> : (
+        {grupos.isPending ? (
+          <SkeletonLinhas n={6} />
+        ) : grupos.isError ? (
+          <Erro erro={grupos.error} onRetry={() => grupos.refetch()} />
+        ) : !grupos.data?.length ? (
+          <Vazio texto="Nenhum grupo cadastrado" />
+        ) : (
           <div className="overflow-x-auto rounded-2xl border bg-card">
             <table className="w-full min-w-[52rem] text-sm">
               <thead className="border-b text-left text-xs uppercase text-muted-foreground">
-                <tr>{["Nome", "Perfil", "Token", "Pontos", "Ativo", ""].map((h) => <th key={h || "acoes"} className="px-3 py-3 font-medium">{h}</th>)}</tr>
+                <tr>
+                  {["Nome", "Perfil", "Token", "Pontos", "Ativo", ""].map((h) => (
+                    <th key={h || "acoes"} className="px-3 py-3 font-medium">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
               </thead>
               <tbody>
                 {grupos.data.map((g) => (
@@ -140,9 +200,17 @@ function Painel({ sair }: { sair: () => void }) {
                     <td className="px-3 py-3 font-medium">{g.nome}</td>
                     <td className="px-3 py-3">@{g.perfil.handle}</td>
                     <td className="px-3 py-3">
-                      <span className="font-mono text-xs">{visiveis[g.id] ? g.token : mascarar(g.token)}</span>
+                      <span className="font-mono text-xs">
+                        {visiveis[g.id] ? g.token : mascarar(g.token)}
+                      </span>
                       <div className="mt-1 flex flex-wrap gap-1">
-                        <button type="button" onClick={() => setVisiveis((s) => ({ ...s, [g.id]: !s[g.id] }))} className="rounded-md border px-2 py-1 text-xs">{visiveis[g.id] ? "ocultar" : "mostrar"}</button>
+                        <button
+                          type="button"
+                          onClick={() => setVisiveis((s) => ({ ...s, [g.id]: !s[g.id] }))}
+                          className="rounded-md border px-2 py-1 text-xs"
+                        >
+                          {visiveis[g.id] ? "ocultar" : "mostrar"}
+                        </button>
                         <BotaoCopiar texto={g.token} />
                       </div>
                     </td>
@@ -150,7 +218,13 @@ function Painel({ sair }: { sair: () => void }) {
                     <td className="px-3 py-3">{g.ativo ? "ativo" : "revogado"}</td>
                     <td className="px-3 py-3">
                       {g.ativo && (
-                        <button type="button" onClick={() => run(() => adminRevogar(g.id), "Token revogado")} className="text-destructive">Revogar token</button>
+                        <button
+                          type="button"
+                          onClick={() => run(() => adminRevogar(g.id), "Token revogado")}
+                          className="text-destructive"
+                        >
+                          Revogar token
+                        </button>
                       )}
                     </td>
                   </tr>
@@ -163,7 +237,11 @@ function Painel({ sair }: { sair: () => void }) {
 
       <section className="rounded-2xl border bg-card p-5">
         <h2 className="mb-4 text-xl font-semibold">Novo grupo</h2>
-        {perfis.isPending ? <SkeletonLinhas n={2} /> : perfis.isError ? <Erro erro={perfis.error} onRetry={() => perfis.refetch()} /> : (
+        {perfis.isPending ? (
+          <SkeletonLinhas n={2} />
+        ) : perfis.isError ? (
+          <Erro erro={perfis.error} onRetry={() => perfis.refetch()} />
+        ) : (
           <form
             className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
             onSubmit={async (e) => {
@@ -184,24 +262,65 @@ function Painel({ sair }: { sair: () => void }) {
           >
             <label className="space-y-1">
               <span className="text-xs text-muted-foreground">Nome</span>
-              <input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Grupo 7" className="w-full rounded-md border bg-background px-3 py-2 text-sm" />
+              <input
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                placeholder="Grupo 7"
+                className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+              />
             </label>
             <label className="space-y-1">
               <span className="text-xs text-muted-foreground">Perfil sem grupo</span>
-              <select value={perfilId} onChange={(e) => setPerfilId(e.target.value)} className="w-full rounded-md border bg-background px-3 py-2 text-sm" disabled={!livres.length}>
-                <option value="">{livres.length ? "Escolha um perfil" : "Todos os perfis já têm grupo"}</option>
-                {livres.map((p) => <option key={p.id} value={p.id}>@{p.handle} — {p.nome}</option>)}
+              <select
+                value={perfilId}
+                onChange={(e) => setPerfilId(e.target.value)}
+                className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                disabled={!livres.length}
+              >
+                <option value="">
+                  {livres.length ? "Escolha um perfil" : "Todos os perfis já têm grupo"}
+                </option>
+                {livres.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    @{p.handle} — {p.nome}
+                  </option>
+                ))}
               </select>
             </label>
-            <button disabled={criando || !nome.trim() || !perfilId} className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60">{criando ? "Criando…" : "Criar grupo"}</button>
+            <button
+              disabled={criando || !nome.trim() || !perfilId}
+              className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
+            >
+              {criando ? "Criando…" : "Criar grupo"}
+            </button>
           </form>
         )}
       </section>
 
       <section className="flex flex-wrap gap-3">
-        <button type="button" onClick={() => run(() => adminSimular(20), "Atividade simulada")} className="rounded-xl border bg-card px-4 py-3 text-sm font-medium">Simular atividade (20)</button>
-        <button type="button" onClick={() => { setResetAberto(true); setConfirmacao(""); }} className="rounded-xl border border-destructive px-4 py-3 text-sm font-medium text-destructive">Resetar dados</button>
-        <Link to="/telao" className="inline-flex items-center gap-2 rounded-xl border bg-card px-4 py-3 text-sm font-medium"><Monitor className="h-4 w-4" /> Abrir telão</Link>
+        <button
+          type="button"
+          onClick={() => run(() => adminSimular(20), "Atividade simulada")}
+          className="rounded-xl border bg-card px-4 py-3 text-sm font-medium"
+        >
+          Simular atividade (20)
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setResetAberto(true);
+            setConfirmacao("");
+          }}
+          className="rounded-xl border border-destructive px-4 py-3 text-sm font-medium text-destructive"
+        >
+          Resetar dados
+        </button>
+        <Link
+          to="/telao"
+          className="inline-flex items-center gap-2 rounded-xl border bg-card px-4 py-3 text-sm font-medium"
+        >
+          <Monitor className="h-4 w-4" /> Abrir telão
+        </Link>
       </section>
 
       {resetAberto && (
@@ -215,11 +334,29 @@ function Painel({ sair }: { sair: () => void }) {
             run(adminReset, "Dados resetados");
           }}
         >
-          <p className="font-medium">Digite RESET para confirmar. Isso recria os dados da oficina.</p>
-          <input value={confirmacao} onChange={(e) => setConfirmacao(e.target.value)} placeholder="RESET" className="w-full max-w-xs rounded-md border bg-background px-3 py-2 font-mono" />
+          <p className="font-medium">
+            Digite RESET para confirmar. Isso recria os dados da oficina.
+          </p>
+          <input
+            value={confirmacao}
+            onChange={(e) => setConfirmacao(e.target.value)}
+            placeholder="RESET"
+            className="w-full max-w-xs rounded-md border bg-background px-3 py-2 font-mono"
+          />
           <div className="flex gap-2">
-            <button disabled={confirmacao !== "RESET"} className="rounded-md bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground disabled:opacity-50">Confirmar reset</button>
-            <button type="button" onClick={() => setResetAberto(false)} className="rounded-md border px-4 py-2 text-sm">Cancelar</button>
+            <button
+              disabled={confirmacao !== "RESET"}
+              className="rounded-md bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground disabled:opacity-50"
+            >
+              Confirmar reset
+            </button>
+            <button
+              type="button"
+              onClick={() => setResetAberto(false)}
+              className="rounded-md border px-4 py-2 text-sm"
+            >
+              Cancelar
+            </button>
           </div>
         </form>
       )}

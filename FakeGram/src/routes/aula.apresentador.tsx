@@ -13,9 +13,16 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { Palco, ProvedorAula, Rico, faixaDeMinutos } from "@/components/aula/slide";
+import { Palco, ProvedorAula, Rico } from "@/components/aula/slide";
 import { BLOCOS, SLIDES, blocoDoSlide, type Bloco, type Slide } from "@/content/aula";
-import { relogio, useAgora, useAulaSync, useTeclasAula, type EstadoAula } from "@/lib/aula";
+import {
+  faixaDeMinutos,
+  relogio,
+  useAgora,
+  useAulaSync,
+  useTeclasAula,
+  type EstadoAula,
+} from "@/lib/aula";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/aula/apresentador")({

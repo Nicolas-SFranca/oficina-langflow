@@ -10,7 +10,12 @@ export function tempoRelativo(iso: string) {
   return `há ${Math.floor(h / 24)} d`;
 }
 
-export const hora = (iso: string) => new Date(iso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+export const hora = (iso: string) =>
+  new Date(iso).toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 
 export const mascarar = (t: string) => `••••${t.slice(-4)}`;
 
@@ -30,7 +35,11 @@ export function useVisibleInterval(ms: number): number | false {
 export function useChecks(chave: string) {
   const [v, setV] = useState<Record<string, boolean>>({});
   useEffect(() => {
-    try { setV(JSON.parse(localStorage.getItem(chave) ?? "{}")); } catch { /* ignore */ }
+    try {
+      setV(JSON.parse(localStorage.getItem(chave) ?? "{}"));
+    } catch {
+      /* ignore */
+    }
   }, [chave]);
   const toggle = (id: string) =>
     setV((old) => {

@@ -173,3 +173,8 @@ export function relogio(segundos: number): string {
   const s = Math.max(0, Math.floor(segundos));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 }
+
+/** "min 10–12", ou "antes da aula" para o que acontece na chegada. */
+export function faixaDeMinutos([inicio, fim]: [number, number]) {
+  return inicio < 0 ? "antes da aula" : `min ${inicio}–${fim}`;
+}

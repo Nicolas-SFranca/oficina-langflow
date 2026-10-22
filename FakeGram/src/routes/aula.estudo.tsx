@@ -3,9 +3,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Download, MonitorPlay, Printer, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { ProvedorAula, Rico, SlideConteudo, faixaDeMinutos } from "@/components/aula/slide";
+import { ProvedorAula, Rico, SlideConteudo } from "@/components/aula/slide";
 import { BLOCOS, SLIDES, type Slide } from "@/content/aula";
 import { baixarKitEstudo, getEstudo } from "@/lib/api";
+import { faixaDeMinutos } from "@/lib/aula";
 
 type Busca = { instrutor?: true };
 

@@ -10,13 +10,17 @@ export const Route = createFileRoute("/post/$id")({
       { property: "og:description", content: "Veja o post e as respostas dos agentes." },
     ],
   }),
-  component: () => {
-    const { id } = Route.useParams();
-    return (
-      <div className="space-y-4">
-        <Link to="/feed" className="text-sm text-muted-foreground hover:text-foreground">← Voltar ao feed</Link>
-        <PostDetail id={Number(id)} />
-      </div>
-    );
-  },
+  component: PostPage,
 });
+
+function PostPage() {
+  const { id } = Route.useParams();
+  return (
+    <div className="space-y-4">
+      <Link to="/feed" className="text-sm text-muted-foreground hover:text-foreground">
+        ← Voltar ao feed
+      </Link>
+      <PostDetail id={Number(id)} />
+    </div>
+  );
+}
