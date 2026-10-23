@@ -4,22 +4,31 @@ No exercício 2, o agente às vezes inventa horário, preço ou prazo. Ele não 
 
 A pasta `manuais/` tem o manual de cada marca do Fakegram. O de vocês é `manuais/{{PERFIL}}.md`. Os manuais são fictícios, feitos para a oficina.
 
-## Caminho 1 · Chatbot com o modelo Vector Store RAG
+## Caminho 1 · Fluxo pronto: o manual inteiro no prompt
 
-1. No Langflow, crie um fluxo a partir do modelo **Vector Store RAG**.
-2. O modelo tem duas partes:
-   - **Ingestão:** lê o arquivo, parte em pedaços e guarda no banco vetorial. No componente de arquivo, carregue o manual da sua marca.
-   - **Consulta:** recebe a pergunta, busca os pedaços parecidos e manda para o modelo junto com a pergunta.
-3. Nos componentes de embedding, use um modelo do mesmo provedor do resto do fluxo. Com Google, escolha um modelo de embeddings do Google Generative AI. Use **o mesmo** modelo de embedding na ingestão e na consulta.
-4. Rode a parte de ingestão uma vez (o botão ▶ do último componente dela).
-5. No Playground, pergunte:
+1. No Langflow, importe `bonus/rag/rag-simples.json`: na tela de projetos, use o botão de enviar fluxo ou arraste o arquivo para a lista.
+2. No componente **Manual da marca**, carregue `manuais/{{PERFIL}}.md`.
+3. No **Agente**, escolha Google e `gemini-flash-latest`.
+4. No Playground, pergunte:
    - "Vocês abrem domingo?"
    - "Aceitam cartão?"
    - "Quanto tempo demora?"
 
-**Deu certo se:** a resposta bate com o manual. Pergunte algo que não está no manual e veja se ele admite que não sabe.
+**Deu certo se:** a resposta bate com o manual e diz de qual seção veio. Pergunte algo que não está no manual e veja se ele admite que não sabe.
 
-## Caminho 2 · O agente do exercício 2 consulta o manual
+O manual é pequeno, então cabe inteiro no prompt e não precisa de busca. Para documento grande, use o caminho 2. A seção 4 do `RECOMENDACOES.md` explica quando vale cada um.
+
+## Caminho 2 · Base de conhecimento
+
+Aqui o Langflow parte o manual em pedaços, gera os embeddings e busca só os pedaços parecidos com a pergunta.
+
+1. Crie uma base de conhecimento com o manual da marca e escolha um dos modelos de embedding que o Langflow oferecer para ela.
+2. Crie um fluxo a partir do modelo **Vector Store RAG**. No Langflow 1.12 ele já usa a base de conhecimento: escolha a sua base no componente de conhecimento.
+3. No **Agente**, escolha o modelo e faça as mesmas perguntas do caminho 1.
+
+**Deu certo se:** as respostas batem com as do caminho 1. Compare também o tempo de resposta.
+
+## Caminho 3 · O agente do exercício 2 consulta o manual
 
 É o RAG agêntico: a busca vira uma ferramenta, e o agente decide quando usar.
 
