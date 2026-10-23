@@ -6,9 +6,17 @@ import { describe, expect, it } from "vitest";
 import { NOMES_DIAGRAMAS } from "@/components/aula/diagramas";
 import { ProvedorAula, SlideConteudo } from "@/components/aula/slide";
 import { BLOCOS, SLIDES, limitarIndice } from "@/content/aula";
-import { NOTAS_DO_INSTRUTOR } from "@/content/aula.instrutor";
 import { relogio, tokenizar } from "@/lib/aula";
 import { routeTree } from "@/routeTree.gen";
+
+// As notas de palco não vão no kit de estudo. Sem o arquivo, a lista fica vazia.
+const NOTAS_DO_INSTRUTOR =
+  Object.values(
+    import.meta.glob<Record<string, string>>("../content/aula.instrutor.ts", {
+      eager: true,
+      import: "NOTAS_DO_INSTRUTOR",
+    }),
+  )[0] ?? {};
 
 describe("conteúdo da aula", () => {
   it("numera os slides em sequência, sem repetir", () => {

@@ -1,13 +1,27 @@
-# O que não sobe no "vercel deploy". Só o backend vai para a Vercel;
-# o FakeGram tem deploy próprio. Segredos locais e o roteiro do instrutor nunca sobem.
+# O que não sobe no "vercel deploy" da API. O código do FakeGram e os testes sobem só
+# para entrar no kit de estudo (app/servicos/kit.py); o site tem deploy próprio.
+# Segredos locais, dependências, builds e o material do instrutor nunca sobem.
 /.env
 /.env.local
 /.venv
 /.neon
 /.claude
+/.cursor
 /.pytest_cache
-/FakeGram
-/tests
+/FakeGram/node_modules
+/FakeGram/.vercel
+/FakeGram/.output
+/FakeGram/.wrangler
+/FakeGram/.lovable
+/FakeGram/.env*
+/FakeGram/src/content/aula.instrutor.ts
+/FakeGram/scripts
 __pycache__
 *.pyc
 /instrutor
+/docs/ROTEIRO_AULA.md
+/docs/DESCOBERTAS.md
+/PASSO_A_PASSO_LOVABLE_CURSOR.md
+# A CLI ignora .gitignore por padrão; o kit de estudo precisa deles.
+!.gitignore
+!FakeGram/.gitignore

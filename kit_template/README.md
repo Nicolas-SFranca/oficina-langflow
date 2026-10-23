@@ -8,7 +8,11 @@ Este zip é o material do seu grupo. O `.env` já traz o endereço da API, o end
 - `ex2/`: o agente de social media, ligado ao MCP do Fakegram com o token do grupo.
 - `ex3/`: um MCP escrito por vocês, rodando na própria máquina, em três níveis.
 - `bonus/analista/`: um agente que consulta o banco só para leitura e procura padrões de engajamento.
-- `bonus/rag/`: um chatbot que responde com base no manual da marca, para o agente parar de inventar horário e preço.
+- `bonus/rag/`: um chatbot que responde com base no manual da marca, para o agente parar de inventar horário e preço. Traz o fluxo pronto `rag-simples.json` para importar no Langflow.
+- `RECOMENDACOES.md`: como criar e configurar agentes, MCP e RAG, com as fontes de cada dica.
+- `DESAFIOS.md`: oito desafios para continuar depois da aula, a maioria sem depender do Fakegram.
+- `.env.example`: o modelo do `.env`, com o que vai em cada linha.
+- `projeto/`: só no kit de estudo. O código completo do Fakegram, com a API, o MCP e o site. Comece por `projeto/COMO_RODAR.md`.
 
 ## Antes de começar
 

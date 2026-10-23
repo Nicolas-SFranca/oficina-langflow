@@ -58,3 +58,19 @@ def test_kit_de_estudo_traz_gabarito_e_nenhum_segredo(cliente, admin, estudo_fec
     env = kit.read(".env").decode("utf-8")
     assert "TOKEN=cole-aqui-o-token-do-seu-grupo" in env
     assert "NEON_RO_URL=\n" in env.replace("\r\n", "\n")
+
+
+def test_kit_de_estudo_traz_o_codigo_sem_segredo_nem_material_do_instrutor(
+    cliente, admin, estudo_fechado
+):
+    cliente.post("/api/admin/estudo", headers=admin, json={"liberado": True})
+    kit = _zip(cliente.get("/api/estudo/kit"))
+    nomes = kit.namelist()
+    assert {"projeto/COMO_RODAR.md", "projeto/app/main.py", "projeto/FakeGram/src/content/aula.ts"} <= set(nomes)
+    assert "projeto/FakeGram/src/content/aula.instrutor.ts" not in nomes
+    assert not any(nome.startswith("projeto/docs/ROTEIRO") for nome in nomes)
+    assert not any("/node_modules/" in nome or "/__pycache__/" in nome for nome in nomes)
+    envs = {nome for nome in nomes if nome.startswith("projeto/") and "/.env" in nome}
+    assert envs <= {"projeto/.env.example", "projeto/kit_template/.env", "projeto/kit_template/.env.example"}
+    # O código vai como está: o kit.py precisa continuar com os marcadores.
+    assert "{{API_URL}}" in kit.read("projeto/app/servicos/kit.py").decode("utf-8")

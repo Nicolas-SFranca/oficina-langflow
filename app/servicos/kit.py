@@ -1,7 +1,7 @@
 """Monta os zips do aluno a partir de kit_template.
 
 O kit do grupo leva o token e sai durante a aula. O kit de estudo não leva token,
-inclui a pasta gabarito e só sai depois que o instrutor libera.
+inclui a pasta gabarito e o código do Fakegram, e só sai depois que o instrutor libera.
 """
 
 import io
@@ -16,6 +16,34 @@ RAIZ = Path(__file__).resolve().parents[2]
 PASTA = RAIZ / "kit_template"
 GABARITO = RAIZ / "gabarito"
 MARCADORES = ("{{API_URL}}", "{{MCP_URL}}", "{{TOKEN}}", "{{GRUPO}}", "{{PERFIL}}", "{{NEON_RO_URL}}")
+
+# O código do Fakegram que vai na pasta projeto/ do kit de estudo. Fica de fora o que não
+# é código: segredos, dependências instaladas, saídas de build e o material do instrutor.
+PROJETO = (
+    "COMO_RODAR.md",
+    "README.md",
+    ".env.example",
+    ".gitignore",
+    "requirements.txt",
+    "pyproject.toml",
+    "vercel.json",
+    "docs/CONTRATO_API.md",
+    "app",
+    "migrations",
+    "scripts",
+    "tests",
+    "kit_template",
+    "gabarito",
+    "FakeGram",
+)
+PROJETO_PASTAS_FORA = {"__pycache__", ".pytest_cache", "node_modules", ".vercel", ".output", ".wrangler", ".lovable"}
+PROJETO_ARQUIVOS_FORA = {
+    "FakeGram/src/content/aula.instrutor.ts",
+    "FakeGram/scripts/roteiro-instrutor.ts",
+    "FakeGram/AGENTS.md",
+    "FakeGram/bun.lock",
+    "FakeGram/bunfig.toml",
+}
 
 
 def _nome_do_arquivo(nome_do_grupo: str) -> str:
@@ -43,9 +71,37 @@ def _arquivos(pasta: Path, prefixo: str = "") -> Iterator[tuple[Path, str]]:
             yield caminho, prefixo + caminho.relative_to(pasta).as_posix()
 
 
-def _montar(arquivos: list[tuple[Path, str]], trocas: dict[str, str]) -> bytes:
+def _segredo(relativo: str) -> bool:
+    """Qualquer .env de verdade. O .env.example e o .env de marcadores do kit_template ficam."""
+    nome = relativo.rsplit("/", 1)[-1]
+    return nome.startswith(".env") and nome != ".env.example" and relativo != "kit_template/.env"
+
+
+def _arquivos_do_projeto() -> Iterator[tuple[Path, str]]:
+    for item in PROJETO:
+        caminho = RAIZ / item
+        candidatos = sorted(caminho.rglob("*")) if caminho.is_dir() else [caminho]
+        for arquivo in candidatos:
+            if not arquivo.is_file():
+                continue
+            relativo = arquivo.relative_to(RAIZ).as_posix()
+            if PROJETO_PASTAS_FORA & set(arquivo.relative_to(RAIZ).parts):
+                continue
+            if relativo in PROJETO_ARQUIVOS_FORA or _segredo(relativo):
+                continue
+            yield arquivo, f"projeto/{relativo}"
+
+
+def _montar(
+    arquivos: list[tuple[Path, str]],
+    trocas: dict[str, str],
+    sem_trocas: list[tuple[Path, str]] | None = None,
+) -> bytes:
+    """sem_trocas vai como está: é código-fonte, e o kit.py e os testes contêm os marcadores."""
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w", compression=zipfile.ZIP_DEFLATED) as arquivo:
+        for caminho, arco in sem_trocas or []:
+            arquivo.writestr(arco, caminho.read_bytes())
         for caminho, arco in arquivos:
             bruto = caminho.read_bytes()
             try:
@@ -66,7 +122,7 @@ def gerar_zip(grupo: dict) -> tuple[bytes, str]:
 
 
 def gerar_zip_de_estudo() -> tuple[bytes, str]:
-    """Kit para estudar depois da aula: sem token, sem senha do banco e com os gabaritos."""
+    """Kit para estudar depois da aula: sem token, sem senha do banco, com os gabaritos e o código."""
     trocas = _trocas(
         token="cole-aqui-o-token-do-seu-grupo",
         grupo="estudo",
@@ -74,4 +130,4 @@ def gerar_zip_de_estudo() -> tuple[bytes, str]:
         neon_ro_url="",
     )
     arquivos = list(_arquivos(PASTA)) + list(_arquivos(GABARITO, prefixo="gabarito/"))
-    return _montar(arquivos, trocas), "kit-de-estudo-fakegram.zip"
+    return _montar(arquivos, trocas, list(_arquivos_do_projeto())), "kit-de-estudo-fakegram.zip"
