@@ -1,11 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Download, MonitorPlay, Printer } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
+import { MonitorPlay, Printer } from "lucide-react";
 import { ProvedorAula, Rico, SlideConteudo } from "@/components/aula/slide";
+import { BotaoKitEstudo } from "@/components/kit-estudo";
 import { BLOCOS, SLIDES, type Slide } from "@/content/aula";
-import { baixarKitEstudo, getEstudo } from "@/lib/api";
 import { faixaDeMinutos } from "@/lib/aula";
 
 export const Route = createFileRoute("/aula/estudo")({
@@ -46,32 +43,6 @@ function Indice() {
         </div>
       ))}
     </div>
-  );
-}
-
-function BotaoKitEstudo() {
-  const estudo = useQuery({ queryKey: ["estudo"], queryFn: getEstudo });
-  const [baixando, setBaixando] = useState(false);
-  const liberado = !!estudo.data?.liberado;
-  return (
-    <button
-      type="button"
-      disabled={!liberado || baixando}
-      title={liberado ? undefined : "O instrutor libera depois da aula"}
-      onClick={async () => {
-        setBaixando(true);
-        try {
-          await baixarKitEstudo();
-        } catch (erro) {
-          toast.error((erro as Error).message);
-        }
-        setBaixando(false);
-      }}
-      className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-50"
-    >
-      <Download className="h-4 w-4" />
-      {liberado ? "Baixar kit de estudo" : "Kit de estudo: liberado depois da aula"}
-    </button>
   );
 }
 

@@ -1,7 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BookOpen, ClipboardCheck, Images, Users } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  ClipboardCheck,
+  Github,
+  GraduationCap,
+  Images,
+  Users,
+} from "lucide-react";
 import { AgentBadge, Erro, Vazio } from "@/components/fg";
+import { BotaoKitEstudo } from "@/components/kit-estudo";
+import { useEstudoLiberado } from "@/hooks/use-estudo";
 import { EXERCICIOS } from "@/content/exercicios";
 import { getFeed } from "@/lib/api";
 import { tempoRelativo, useVisibleInterval } from "@/lib/util";
@@ -24,6 +34,43 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+/** Aparece quando o instrutor libera o kit de estudo no /admin, depois da aula. */
+function AulaConcluida() {
+  const liberado = useEstudoLiberado();
+  if (!liberado) return null;
+  return (
+    <section className="rounded-3xl border border-primary/50 bg-primary/5 p-6 md:p-10">
+      <p className="flex items-center gap-2 font-mono text-xs text-primary">
+        <GraduationCap className="h-4 w-4" /> aula concluída
+      </p>
+      <h2 className="mt-3 text-2xl font-bold md:text-4xl">Instale aqui o projeto e os desafios</h2>
+      <p className="mt-3 max-w-2xl text-muted-foreground">
+        O kit traz o código completo do Fakegram (API, servidor MCP e site), os três exercícios com
+        os gabaritos, o fluxo de RAG pronto para importar no Langflow, oito desafios e um guia de
+        como criar agentes, MCP e RAG, com a fonte de cada dica. Comece pelo{" "}
+        <code className="font-mono text-sm">projeto/COMO_RODAR.md</code>.
+      </p>
+      <div className="mt-6 flex flex-wrap items-center gap-3">
+        <BotaoKitEstudo rotulo="Baixar o projeto e os desafios" destaque />
+        <Link
+          to="/aula/estudo"
+          className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm hover:bg-secondary"
+        >
+          <BookOpen className="h-4 w-4" /> Material da aula
+        </Link>
+        <a
+          href="https://github.com/Nicolas-SFranca/oficina-langflow"
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm hover:bg-secondary"
+        >
+          <Github className="h-4 w-4" /> Código do Fakegram
+        </a>
+      </div>
+    </section>
+  );
+}
+
 function Index() {
   const intervalo = useVisibleInterval(5000);
   const feed = useQuery({
@@ -33,6 +80,7 @@ function Index() {
   });
   return (
     <div className="space-y-14">
+      <AulaConcluida />
       <section className="lab-grid relative overflow-hidden rounded-3xl border p-8 md:p-14">
         <p className="font-mono text-xs text-primary">// oficina · 2h30 · langflow + mcp + rag</p>
         <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-tight md:text-6xl">
